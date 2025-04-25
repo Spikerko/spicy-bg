@@ -1,0 +1,23 @@
+{
+  "tasks": {
+    "test": "deno run --allow-read --allow-run --allow-net --allow-env --allow-write ./Tasks/Test.ts",
+		"release": "deno run --allow-read --allow-run --allow-net --allow-env --allow-write ./Tasks/Release.ts"
+  },
+
+  "compilerOptions": {
+		"lib": [
+			"ESNext",
+			"DOM", "DOM.Iterable"
+		]
+	},
+
+  "imports": {
+    "@3d/three": "jsr:@3d/three@^0.166.0",
+    "@socali/modules": "jsr:@socali/modules@^4.4.1",
+    "@socali/spices": "jsr:@socali/spices@^4.1.1",
+    "@socali/Spices/Player": "jsr:@socali/spices@^4.1.1/Spicetify/Services/Player",
+		"@socali/Spices/Session": "jsr:@socali/spices@^4.1.1/Spicetify/Services/Session",
+    "@spikerko/tools": "jsr:@spikerko/tools@^1.0.0",
+    "seedrandom": "npm:seedrandom@^3.0.5"
+  }
+}
