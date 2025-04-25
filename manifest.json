@@ -2,7 +2,7 @@
 	{
 		"name": "SpicyBG",
 		"description": "SpicyBG Brings a nice and beautiful dynamic background to your Spotify Client!",
-		"preview": "./Previews/small-preview.png",
+		"preview": "./Previews/page-preview.png",
 		"main": "./Builds/Release/spicy-bg.mjs",
 		"readme": "README.md",
 		"branch": "main",
