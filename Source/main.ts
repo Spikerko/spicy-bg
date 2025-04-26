@@ -94,7 +94,7 @@ OnSpotifyReady
                                 });
 
                                 // Add the "BackgroundLayer" class
-                                currentBgElement.GetCanvasElement().classList.add("BackgroundLayer");
+                                currentBgElement.GetCanvasElement().classList.add("SpicyBG", "BackgroundLayer");
 
                                 // Initialize with the current cover art
                                 await currentBgElement.Update({
