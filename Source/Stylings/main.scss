@@ -33,7 +33,7 @@
   display: none;
 }
 
-:root:has(.SpicyBGContainer.BackgroundContainer) {
+:root:has(.SpicyBG.BackgroundLayer) {
   .Root {
     .SpicyBG.BackgroundLayer {
       position: absolute;
