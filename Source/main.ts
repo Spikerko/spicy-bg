@@ -157,6 +157,7 @@ OnSpotifyReady
                     whentilListener.Cancel();
                 });
 
+                // deno-lint-ignore no-explicit-any
                 (globalThis as any).SpicyBG.Status = "injected";
             } catch (error) {
                 console.error("Failed to apply dynamic background:", error);
@@ -259,6 +260,11 @@ OnSpotifyReady
                 if (currentBgElement) {
                     currentBgElement.Destroy();
                     currentBgElement = undefined;
+                }
+
+                if (backgroundContainer) {
+                    backgroundContainer.remove();
+                    backgroundContainer = undefined;
                 }
 
                 // Force a small delay to ensure the BackgroundToggle.Enabled state is updated
