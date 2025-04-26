@@ -17,7 +17,7 @@
     "@socali/spices": "jsr:@socali/spices@^4.1.1",
     "@socali/Spices/Player": "jsr:@socali/spices@^4.1.1/Spicetify/Services/Player",
 		"@socali/Spices/Session": "jsr:@socali/spices@^4.1.1/Spicetify/Services/Session",
-    "@spikerko/tools": "jsr:@spikerko/tools@^1.0.0",
+    "@spikerko/tools": "jsr:@spikerko/tools@^1.1.1",
     "seedrandom": "npm:seedrandom@^3.0.5"
   }
 }
