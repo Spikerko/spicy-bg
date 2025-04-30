@@ -1,4 +1,4 @@
-import { GlobalMaid, Spotify } from "@socali/Spices/Session";
+import { GlobalMaid, Spotify } from "@spikerko/spices/Spicetify/Services/Session";
 import { Signal } from "@socali/modules/Signal";
 import { Maid } from "@socali/modules/Maid";
 import { GetSetting, SetSetting } from "./SettingsStore.ts";

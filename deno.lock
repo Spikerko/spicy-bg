@@ -8,11 +8,9 @@
     "jsr:@luca/esbuild-deno-loader@0.10.3": "0.10.3",
     "jsr:@oak/commons@0.10": "0.10.2",
     "jsr:@oak/oak@16.0.0": "16.0.0",
-    "jsr:@socali/beautiful-lyrics@1": "1.0.0",
     "jsr:@socali/modules@^4.4.1": "4.4.1",
-    "jsr:@socali/pinyin@4.0.0": "4.0.0",
-    "jsr:@socali/spices@*": "4.1.1",
-    "jsr:@socali/spices@^4.1.1": "4.1.1",
+    "jsr:@spikerko/spices@*": "1.1.0",
+    "jsr:@spikerko/spices@^1.1.0": "1.1.0",
     "jsr:@spikerko/tools@^1.1.1": "1.1.1",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.224": "0.224.0",
@@ -38,13 +36,10 @@
     "jsr:@std/path@0.213": "0.213.1",
     "jsr:@std/path@0.223": "0.223.0",
     "jsr:@std/path@0.223.0": "0.223.0",
-    "npm:@sglkc/kuroshiro@^1.0.1": "1.0.1",
-    "npm:@types/kuromoji@~0.1.3": "0.1.3",
     "npm:autoprefixer@10.4.19": "10.4.19_postcss@8.4.38",
     "npm:cssnano-preset-advanced@6.1.2": "6.1.2_postcss@8.4.38",
     "npm:cssnano@6.1.2": "6.1.2_postcss@8.4.38",
     "npm:esbuild@0.20.2": "0.20.2",
-    "npm:franc@^6.2.0": "6.2.0",
     "npm:path-to-regexp@6.2.1": "6.2.1",
     "npm:postcss@8.4.38": "8.4.38",
     "npm:sass@1.75.0": "1.75.0",
@@ -94,34 +89,23 @@
         "npm:path-to-regexp"
       ]
     },
-    "@socali/beautiful-lyrics@1.0.0": {
-      "integrity": "18395d01202e0fac34a991010074e50f314634aa8992c5550fe7f918f89fcf6a"
-    },
     "@socali/modules@4.4.1": {
       "integrity": "1a8ae6eb7279ba223413386ab72366512b1ad78503d370643d820b42cac9e966"
     },
-    "@socali/pinyin@4.0.0": {
-      "integrity": "bf4f743daf6750365d935b1439e409035b39af2745a69e1969e1106f0ec6195c"
-    },
-    "@socali/spices@4.1.1": {
-      "integrity": "d91dc166ced40e61704ae20401d11ee6fdd505eb52ca504b84e056d597af1f4b",
+    "@spikerko/spices@1.1.0": {
+      "integrity": "ab57550cfea8e41ba9a7cbeb568bb49c20873b4562cf904e9c613802414ca749",
       "dependencies": [
         "jsr:@codemonument/cliffy",
         "jsr:@luca/esbuild-deno-loader",
         "jsr:@oak/oak",
-        "jsr:@socali/beautiful-lyrics",
         "jsr:@socali/modules",
-        "jsr:@socali/pinyin",
         "jsr:@std/cli",
         "jsr:@std/fs",
         "jsr:@std/path@0.223.0",
-        "npm:@sglkc/kuroshiro",
-        "npm:@types/kuromoji",
         "npm:autoprefixer",
         "npm:cssnano",
         "npm:cssnano-preset-advanced",
         "npm:esbuild",
-        "npm:franc",
         "npm:postcss",
         "npm:sass"
       ]
@@ -237,12 +221,6 @@
     }
   },
   "npm": {
-    "@babel/runtime@7.26.0": {
-      "integrity": "sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==",
-      "dependencies": [
-        "regenerator-runtime"
-      ]
-    },
     "@esbuild/aix-ppc64@0.20.2": {
       "integrity": "sha512-D+EBOJHXdNZcLJRBkhENNG8Wji2kgc9AZ9KiPr1JuZjsNtyHzrsfLRrY0tk2H2aoFu6RANO1y1iPPUCDYWkb5g=="
     },
@@ -312,23 +290,8 @@
     "@esbuild/win32-x64@0.20.2": {
       "integrity": "sha512-N49X4lJX27+l9jbLKSqZ6bKNjzQvHaT8IIFUy+YIqmXQdjYCToGWwOItDrfby14c78aDd5NHQl29xingXfCdLQ=="
     },
-    "@sglkc/kuroshiro@1.0.1": {
-      "integrity": "sha512-pDjzQa+KHcoKas5i0nf2uxNh0cFZlgsKzvj5AHMkAF7cvKTayN+Rllb/X+S3Gz8MpMk6pV95Uyu90+iyq3w+/A==",
-      "dependencies": [
-        "@babel/runtime"
-      ]
-    },
     "@trysound/sax@0.2.0": {
       "integrity": "sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA=="
-    },
-    "@types/doublearray@0.0.32": {
-      "integrity": "sha512-HloTru3I3a55runIVqZX1YBQi2L5A4peNQPh33yshzB4ttt1qHCnHPkuhy9Djy/cTx7i5xJvxItKRPCmvnfpGw=="
-    },
-    "@types/kuromoji@0.1.3": {
-      "integrity": "sha512-u+YwX6eJj6Fmm0F5qunsyA+X8HSiyRNNE5ON3itD3tERax4meq9tv+S7bjTMXkPjqbdBGUmH2maGDCuEvpODwg==",
-      "dependencies": [
-        "@types/doublearray"
-      ]
     },
     "anymatch@3.1.3": {
       "integrity": "sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==",
@@ -394,9 +357,6 @@
         "normalize-path",
         "readdirp"
       ]
-    },
-    "collapse-white-space@2.1.0": {
-      "integrity": "sha512-loKTxY1zCOuG4j9f6EPnuyyYkf58RnhhWTvRoZEokgB+WbdXehfjFviyOVYkqzEWz1Q5kRiZdBYS5SwxbQYwzw=="
     },
     "colord@2.9.3": {
       "integrity": "sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw=="
@@ -580,12 +540,6 @@
     "fraction.js@4.3.7": {
       "integrity": "sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew=="
     },
-    "franc@6.2.0": {
-      "integrity": "sha512-rcAewP7PSHvjq7Kgd7dhj82zE071kX5B4W1M4ewYMf/P+i6YsDQmj62Xz3VQm9zyUzUXwhIde/wHLGCMrM+yGg==",
-      "dependencies": [
-        "trigram-utils"
-      ]
-    },
     "fsevents@2.3.3": {
       "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="
     },
@@ -630,9 +584,6 @@
     },
     "mdn-data@2.0.30": {
       "integrity": "sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA=="
-    },
-    "n-gram@2.0.2": {
-      "integrity": "sha512-S24aGsn+HLBxUGVAUFOwGpKs7LBcG4RudKU//eWzt/mQ97/NMKQxDWHyHx63UNWk/OOdihgmzoETn1tf5nQDzQ=="
     },
     "nanoid@3.3.11": {
       "integrity": "sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w=="
@@ -914,9 +865,6 @@
         "picomatch"
       ]
     },
-    "regenerator-runtime@0.14.1": {
-      "integrity": "sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw=="
-    },
     "sass@1.75.0": {
       "integrity": "sha512-ShMYi3WkrDWxExyxSZPst4/okE9ts46xZmJDSawJQrnte7M1V9fScVB+uNXOVKRBt0PggHOwoZcn8mYX4trnBw==",
       "dependencies": [
@@ -957,13 +905,6 @@
         "is-number"
       ]
     },
-    "trigram-utils@2.0.1": {
-      "integrity": "sha512-nfWIXHEaB+HdyslAfMxSqWKDdmqY9I32jS7GnqpdWQnLH89r6A5sdk3fDVYqGAZ0CrT8ovAFSAo6HRiWcWNIGQ==",
-      "dependencies": [
-        "collapse-white-space",
-        "n-gram"
-      ]
-    },
     "update-browserslist-db@1.1.3_browserslist@4.24.4": {
       "integrity": "sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==",
       "dependencies": [
@@ -980,7 +921,7 @@
     "dependencies": [
       "jsr:@3d/three@0.166",
       "jsr:@socali/modules@^4.4.1",
-      "jsr:@socali/spices@^4.1.1",
+      "jsr:@spikerko/spices@^1.1.0",
       "jsr:@spikerko/tools@^1.1.1",
       "npm:seedrandom@^3.0.5"
     ]

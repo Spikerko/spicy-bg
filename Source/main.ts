@@ -6,12 +6,12 @@ import {
 	HistoryLocation,
 	OnSpotifyReady,
     SpotifyHistory
-} from "@socali/Spices/Session"
+} from "@spikerko/spices/Spicetify/Services/Session"
 import {
     Song,
 	SongChanged,
-} from "@socali/Spices/Player"
-import type { UpdateNoticeConfiguration } from "@socali/spices/AutoUpdate/UpdateNotice"
+} from "@spikerko/spices/Spicetify/Services/Player"
+import type { UpdateNoticeConfiguration } from "@spikerko/spices/AutoUpdate/UpdateNotice"
 import Whentil, { type CancelableTask } from "@spikerko/tools/Whentil";
 import { Maid } from "@socali/modules/Maid";
 import { Timeout } from "@socali/modules/Scheduler";
