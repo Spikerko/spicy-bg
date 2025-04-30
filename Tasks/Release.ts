@@ -1,2 +1,2 @@
-import StartRelease from "jsr:@socali/spices/Build/Release"
+import StartRelease from "jsr:@spikerko/spices/Build/Release"
 StartRelease()

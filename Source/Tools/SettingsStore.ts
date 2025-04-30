@@ -1,4 +1,4 @@
-import { GetInstantStore } from "../Modules/Cache.ts";
+import { GetInstantStore } from "@spikerko/spices/Spicetify/Services/Cache";
 
 type Settings = {
     Enabled: boolean;

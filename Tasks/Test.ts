@@ -1,2 +1,2 @@
-import StartTest from "jsr:@socali/spices/Debug/Test"
+import StartTest from "jsr:@spikerko/spices/Debug/Test"
 StartTest()

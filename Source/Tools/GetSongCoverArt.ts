@@ -1,6 +1,6 @@
 import {
 	Song, SongContext
-} from "@socali/Spices/Player"
+} from "@spikerko/spices/Spicetify/Services/Player"
 import seedrandom from "npm:seedrandom"
 
 export const GetCoverArtForSong = (): [string, (number | undefined)] => {
