@@ -212,26 +212,30 @@ OnSpotifyReady
                                 if (!BGImage) return;
                                 hasBGImage = true;  // Set flag when BGImage is found
 
-                                // Set initial clip-path based on scroll position
+                                // Set initial opacity based on scroll position
                                 const scrollTop = Element.scrollTop;
 
-                                // Calculate the maximum scroll value where the image should be fully clipped
+                                // Calculate the maximum scroll value where the image should be fully transparent
                                 // Using 0.8x the image height for a more aggressive transition
-                                const maxScrollForFullClip = BGImage.offsetHeight * 0.8;
+                                const maxScrollForFullTransparent = BGImage.offsetHeight * 0.8;
 
-                                // Clip multiplier to make the clipping more aggressive (higher = more aggressive)
-                                const clipMultiplier = 0.75;
+                                // Clip multiplier to make the fading more aggressive (higher = more aggressive)
+                                const fadeMultiplier = 1.5;
 
-                                // Calculate clip percentage with multiplier (0% when at top, reaches 100% faster)
-                                const clipPercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullClip) * 100 * clipMultiplier));
-                                BGImage.style.setProperty('--bottom-clip', `${clipPercentage}%`);
+                                // Calculate fade percentage with multiplier (0% when at top, reaches 100% faster)
+                                const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
+                                // Calculate opacity (1 when fadePercentage is 0, 0 when fadePercentage is 100)
+                                const opacity = 1 - (fadePercentage / 100);
+                                BGImage.style.opacity = opacity.toString();
 
                                 Element.addEventListener("scroll", () => {
                                     const scrollTop = Element.scrollTop;
 
-                                    // Calculate clip percentage using the same formula with multiplier
-                                    const clipPercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullClip) * 100 * clipMultiplier));
-                                    BGImage.style.setProperty('--bottom-clip', `${clipPercentage}%`);
+                                    // Calculate fade percentage using the same formula with multiplier
+                                    const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
+                                    // Calculate opacity
+                                    const opacity = 1 - (fadePercentage / 100);
+                                    BGImage.style.opacity = opacity.toString();
                                 }, { signal: EventAbortController.signal });
                             })
                             GlobalMaid.Give(Timeout(40, () => bgImageWhentil?.Cancel()));
