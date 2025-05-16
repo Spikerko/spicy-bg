@@ -1,5 +1,5 @@
 :root:has(.SpicyBG) {
-  --spice-main: unset;
+  --spice-main: #00000012;
   --spice-sidebar: unset;
   --spice-rgb-main: unset;
   --spice-rgb-sidebar: unset;
@@ -65,7 +65,7 @@
   .dhq75ObRGjfBoBlz6clW,
   .main-entityHeader-background.main-entityHeader-overlay,
   .main-topBar-overlay,
-  #SpicyLyricsPage:not(.Fullscreen) .spicy-dynamic-bg:not(.lowqmode),
+  #SpicyLyricsPage:not(.Fullscreen):not(.TippyMode) .spicy-dynamic-bg:not(.lowqmode),
   .BeautifulLyricsPage:not(.Fullscreen) .BeautifulLyricsBackground-Container,
   aside .BeautifulLyricsBackground-Container,
   aside .spicy-dynamic-bg,
@@ -79,7 +79,7 @@
 
   .wozXSN04ZBOkhrsuY5i2,
   .main-entityHeader-background {
-    height: 38.5vh !important;
+    height: 63.5vh !important;
   }
 
   .XUwMufC5NCgIyRMyGXLD {
@@ -96,11 +96,13 @@
   .main-view-container .under-main-view div {
     .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
     .main-entityHeader-background.main-entityHeader-gradient {
-      --bottom-clip: 0%;
-      opacity: 0.95 !important;
+      /* --bottom-clip: 0%; */
+      /* opacity: 0.95 !important; */
       filter: brightness(0.75);
-      clip-path: inset(0 0 var(--bottom-clip) 0);
+     /*  clip-path: inset(0 0 var(--bottom-clip) 0); */
       transition: none !important;
+      -webkit-mask-image: linear-gradient(to top, transparent, black 55%);
+      mask-image: linear-gradient(to top, transparent, black 55%);
     }
   }
 
@@ -322,5 +324,10 @@
   .main-nowPlayingView-coverArtContainer div:has(video)::before,
   .main-nowPlayingView-coverArtContainer div:has(video)::after {
     display: none;
+  }
+
+  .EmeHQXR87mUskYK6xEde,
+  .playlist-playlist-playlistContent {
+    background-color: unset !important;
   }
 }
