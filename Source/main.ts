@@ -5,6 +5,7 @@ import {
 	GlobalMaid,
 	HistoryLocation,
 	OnSpotifyReady,
+    ShowNotification,
     SpotifyHistory
 } from "@spikerko/spices/Spicetify/Services/Session"
 import {
@@ -16,6 +17,7 @@ import Whentil, { type CancelableTask } from "@spikerko/tools/Whentil";
 import { Maid } from "@socali/modules/Maid";
 import { Timeout } from "@socali/modules/Scheduler";
 import { BackgroundToggle, DeregisterBackgroundToggle, RegisterBackgroundToggle, GetToggleSignal } from "./Tools/BackgroundToggle.ts";
+import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
 
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
@@ -181,6 +183,7 @@ OnSpotifyReady
 
         {
             let scrollNodeWhentil: CancelableTask | undefined = undefined;
+            let HeaderContentWhentil: CancelableTask | undefined = undefined;
             let UMVWhentil: CancelableTask | undefined = undefined;
             let bgImageWhentil: CancelableTask | undefined = undefined;
             let currentEventAbortController: AbortController | undefined = undefined;
@@ -211,32 +214,117 @@ OnSpotifyReady
                             (BGImage: HTMLElement | null) => {
                                 if (!BGImage) return;
                                 hasBGImage = true;  // Set flag when BGImage is found
+                                HeaderContentWhentil = Whentil.When(() => document.querySelector<HTMLElement>(".main-view-container .main-entityHeader-container.main-entityHeader-withBackgroundImage"),
+                                (HeaderContent: HTMLElement | null) => {
+                                    if (!HeaderContent) return;
+                                    if (!BackgroundToggle.Enabled) {
+                                        HeaderContent.classList.remove("ScrolledPast");
+                                        HeaderContent.classList.remove("ProfilePictureApplied");
+                                        BGImage.style.opacity = "1";
+                                        BGImage.style.scale = "1";
+                                    }
 
-                                // Set initial opacity based on scroll position
-                                const scrollTop = Element.scrollTop;
+                                    if (BackgroundToggle.Enabled) {
+                                        const ContentSpacing = HeaderContent.querySelector<HTMLElement>(".iWTIFTzhRZT0rCD0_gOK");
+                                        const ArtistId = (event.pathname.includes("/artist/") ? event.pathname.replace("/artist/", "") : undefined);
+                                        if (ContentSpacing && ArtistId) {
+                                            GetArtistsProfilePicture(ArtistId)
+                                                .then(ArtistProfilePicture => {
+                                                    if (ArtistProfilePicture === undefined) {
+                                                        return;
+                                                    }
+                                                    const ExistingPfp = ContentSpacing.querySelector<HTMLElement>(".main-entityHeader-imageContainer");
+                                                    if (ExistingPfp) {
+                                                        ExistingPfp.remove();
+                                                    }
+                                                    const ProfilePictureElement = document.createElement("div");
+                                                    ProfilePictureElement.className = "main-entityHeader-imageContainer main-entityHeader-imageContainerNew"
+                                                    ProfilePictureElement.draggable = false;
+                                                    ProfilePictureElement.innerHTML = `
+                                                        <div class="main-entityHeader-image" draggable="false">
+                                                            <img 
+                                                                aria-hidden="false" 
+                                                                draggable="false" 
+                                                                loading="lazy" 
+                                                                src="${ArtistProfilePicture}" 
+                                                                alt="" 
+                                                                class="main-image-image main-entityHeader-image main-entityHeader-shadow main-entityHeader-circle main-image-loaded" 
+                                                            >
+                                                        </div>
+                                                    `.trim()
+                                                    GlobalMaid.Give(ProfilePictureElement);
+                                                    ContentSpacing.insertBefore(ProfilePictureElement, ContentSpacing.lastChild);
+                                                    HeaderContent.classList.add("ProfilePictureApplied");
+                                                })
+                                                .catch((error) => {
+                                                    console.error("Failed to get Artist Profile Picture", error, ArtistId);
+                                                    HeaderContent.classList.remove("ProfilePictureApplied");
+                                                    ShowNotification(`SpicyBG: Failed to get Artist Profile Picture for ${ArtistId}. Please report this to the developer, as an issue on Github, or on my Discord: @spikerko`, "error", 5);
+                                                })
+                                            
+                                        }
+                                    }
 
-                                // Calculate the maximum scroll value where the image should be fully transparent
-                                // Using 0.8x the image height for a more aggressive transition
-                                const maxScrollForFullTransparent = BGImage.offsetHeight * 0.8;
-
-                                // Clip multiplier to make the fading more aggressive (higher = more aggressive)
-                                const fadeMultiplier = 1.5;
-
-                                // Calculate fade percentage with multiplier (0% when at top, reaches 100% faster)
-                                const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
-                                // Calculate opacity (1 when fadePercentage is 0, 0 when fadePercentage is 100)
-                                const opacity = 1 - (fadePercentage / 100);
-                                BGImage.style.opacity = opacity.toString();
-
-                                Element.addEventListener("scroll", () => {
+                                    // Set initial opacity based on scroll position
                                     const scrollTop = Element.scrollTop;
 
-                                    // Calculate fade percentage using the same formula with multiplier
+                                    // Calculate the maximum scroll value where the image should be fully transparent
+                                    // Using 0.8x the image height for a more aggressive transition
+                                    const maxScrollForFullTransparent = BGImage.offsetHeight * 0.8;
+
+                                    // Clip multiplier to make the fading more aggressive (higher = more aggressive)
+                                    const fadeMultiplier = 3.85;
+
+                                    // Calculate fade percentage with multiplier (0% when at top, reaches 100% faster)
                                     const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
-                                    // Calculate opacity
-                                    const opacity = 1 - (fadePercentage / 100);
+                                    // Calculate opacity (1 when fadePercentage is 0, 0 when fadePercentage is 100)
+                                    const opacity = 0.95 - (fadePercentage / 100);
                                     BGImage.style.opacity = opacity.toString();
-                                }, { signal: EventAbortController.signal });
+
+                                    if (HeaderContent && opacity <= 0.35) {
+                                        if (BackgroundToggle.Enabled) {
+                                            HeaderContent.classList.add("ScrolledPast")
+                                        }
+                                    } else {
+                                        if (BackgroundToggle.Enabled) {
+                                            HeaderContent?.classList.remove("ScrolledPast")
+                                        }
+                                    }
+
+                                    // Calculate scale
+                                    const scale = 1.05 - (fadePercentage / 100) * 0.05;
+                                    if (BackgroundToggle.Enabled) {
+                                        BGImage.style.scale = scale.toString();
+                                    }
+
+                                    Element.addEventListener("scroll", () => {
+                                        if (!BackgroundToggle.Enabled) {
+                                            HeaderContent.classList.remove("ScrolledPast");
+                                            HeaderContent.classList.remove("ProfilePictureApplied");
+                                            BGImage.style.opacity = "1";
+                                            BGImage.style.scale = "1";
+                                            return;
+                                        }
+                                        const scrollTop = Element.scrollTop;
+
+                                        // Calculate fade percentage using the same formula with multiplier
+                                        const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
+                                        // Calculate opacity
+                                        const opacity = 1 - (fadePercentage / 100);
+                                        BGImage.style.opacity = opacity.toString();
+
+                                        if (HeaderContent && opacity <= 0.35) {
+                                            HeaderContent.classList.add("ScrolledPast")
+                                        } else {
+                                            HeaderContent?.classList.remove("ScrolledPast")
+                                        }
+
+                                        // Calculate scale
+                                        const scale = 1.05 - (fadePercentage / 100) * 0.05;
+                                        BGImage.style.scale = scale.toString();
+                                    }, { signal: EventAbortController.signal });
+                                })
+                                GlobalMaid.Give(Timeout(40, () => HeaderContentWhentil?.Cancel()));
                             })
                             GlobalMaid.Give(Timeout(40, () => bgImageWhentil?.Cancel()));
                         }
@@ -251,6 +339,26 @@ OnSpotifyReady
             GlobalMaid.Give(() => UMVWhentil?.Cancel())
             GlobalMaid.Give(() => bgImageWhentil?.Cancel());
             GlobalMaid.Give(() => currentEventAbortController?.abort());
+            GlobalMaid.Give(GetToggleSignal().Connect(() => {
+                if (!BackgroundToggle.Enabled) {
+                    const HeaderContent = document.querySelector<HTMLElement>(".main-view-container .main-entityHeader-container.main-entityHeader-withBackgroundImage")
+                    if (HeaderContent) {
+                        HeaderContent.classList.remove("ScrolledPast");
+                    }
+
+                    const BGImage = document.querySelector<HTMLElement>(".main-view-container .under-main-view .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD") ?? document.querySelector<HTMLElement>(".main-view-container .under-main-view .main-entityHeader-background.main-entityHeader-gradient");
+                    if (BGImage) {
+                        BGImage.style.opacity = "1";
+                        BGImage.style.scale = "1";
+                    }
+
+                    const ContentSpacing = HeaderContent?.querySelector<HTMLElement>(".iWTIFTzhRZT0rCD0_gOK");
+                    const ExistingPfp = ContentSpacing?.querySelector<HTMLElement>(".main-entityHeader-imageContainer");
+                    if (ExistingPfp) {
+                        ExistingPfp.remove();
+                    }
+                }
+            }))
         }
 
         // Setup Menu Button

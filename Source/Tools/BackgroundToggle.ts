@@ -4,7 +4,7 @@ import { Maid } from "@socali/modules/Maid";
 import { GetSetting, SetSetting } from "./SettingsStore.ts";
 
 export const BackgroundToggle = {
-    Enabled: GetSetting("Enabled") ?? true,
+    Enabled: GetSetting("Enabled") ?? false,
     Registered: false
 };
 

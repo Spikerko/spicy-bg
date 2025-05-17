@@ -79,7 +79,16 @@
 
   .wozXSN04ZBOkhrsuY5i2,
   .main-entityHeader-background {
-    height: 63.5vh !important;
+    height: 78vh !important;
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage {
+    height: 84.5vh !important;
+    transition: height .35s ease-out;
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast {
+    height: 48.5vh !important;
   }
 
   .XUwMufC5NCgIyRMyGXLD {
@@ -103,6 +112,7 @@
       transition: none !important;
       -webkit-mask-image: linear-gradient(to top, transparent, black 55%);
       mask-image: linear-gradient(to top, transparent, black 55%);
+      scale: 1.05;
     }
   }
 
@@ -144,7 +154,8 @@
   .marketplace-tabBar-active,
   .marketplace-header .Dropdown-control,
   .marketplace-content .main-card-card,
-  .main-embedWidgetGenerator-container {
+  .main-embedWidgetGenerator-container,
+  .jW4eWdr_LUeOXwPpKhWG {
     background-color: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(30px) !important;
   }
@@ -329,5 +340,52 @@
   .EmeHQXR87mUskYK6xEde,
   .playlist-playlist-playlistContent {
     background-color: unset !important;
+  }
+
+  .GenericModal__overlay .GenericModal {
+    animation: GenericModal_ScaleIn 0.2s ease-out forwards;
+  }
+
+  .iWTIFTzhRZT0rCD0_gOK {
+    --ProfilePictureWidth: clamp(128px,128px + (var(--main-view-grid-width) - 600px)/424*104,232px);
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .main-entityHeader-imageContainer {
+    position: relative;
+    left: calc(var(--ProfilePictureWidth)* -1 - 50px);
+    transition: left .4s;
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage .eFZahdafW8vQ7xY1kfBg {
+    margin-left: 5px;
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .eFZahdafW8vQ7xY1kfBg {
+    position: relative;
+    left: calc(var(--ProfilePictureWidth)* -1 - 24px);
+    transition: left .4s;
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .eFZahdafW8vQ7xY1kfBg {
+    left: 0;
+  }
+
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .main-entityHeader-imageContainer {
+    left: 0;
+  }
+}
+
+@keyframes GenericModal_ScaleIn {
+  0% {
+    scale: 0;
+  }
+  50% {
+    scale: 1;
+  }
+  65% {
+    scale: 1.05;
+  }
+  100% {
+    scale: 1;
   }
 }

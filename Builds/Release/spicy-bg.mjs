@@ -156,31 +156,34 @@ let cameFromReload = false
 
 const LastFetchedVersionKey = `${ProjectName}|LastFetchedVersion`;
 
-// Show Update Notice after the page was reloaded
-if (localStorage.getItem(LastFetchedVersionKey) !== version) {
-	const fromVersion = localStorage.getItem(LastFetchedVersionKey) ?? "0.0.0";
-	const toVersion = version;
-	const fromVersionInformation = ((fromVersion === undefined) ? undefined : GetVersionInformation(fromVersion))
-	const toVersionInformation = GetVersionInformation(toVersion)
-	const versionDistance = (
-		(fromVersionInformation === undefined) ? undefined
-		: {
-			Major: (toVersionInformation.Major - fromVersionInformation.Major),
-			Minor: (toVersionInformation.Minor - fromVersionInformation.Minor),
-			Patch: (toVersionInformation.Patch - fromVersionInformation.Patch)
+{
+	// Show Update Notice after the page was reloaded
+	const storedLastVersion = localStorage.getItem(LastFetchedVersionKey)
+	if (storedLastVersion !== null && storedLastVersion !== currentVersion) {
+		const fromVersion = storedLastVersion;
+		const toVersion = currentVersion;
+		const fromVersionInformation = ((fromVersion === undefined) ? undefined : GetVersionInformation(fromVersion))
+		const toVersionInformation = GetVersionInformation(toVersion)
+		const versionDistance = (
+			(fromVersionInformation === undefined) ? undefined
+			: {
+				Major: (toVersionInformation.Major - fromVersionInformation.Major),
+				Minor: (toVersionInformation.Minor - fromVersionInformation.Minor),
+				Patch: (toVersionInformation.Patch - fromVersionInformation.Patch)
+			}
+		)
+		if (versionDistance !== undefined) {
+			// Show Update Notice
+			const moduleUpdateNotice = JSON.parse(localStorage.getItem(`${ProjectName}|UpdateNotice`) ?? {}) ?? undefined;
+			if (moduleUpdateNotice?.Type === "Notification") {
+				ShowUpdatedNotification(moduleUpdateNotice?.Name ?? "Unknown Spicetify Extension", fromVersion, version, versionDistance);
+			}
 		}
-	)
-	if (versionDistance !== undefined) {
-		// Show Update Notice
-		const moduleUpdateNotice = JSON.parse(localStorage.getItem(`${ProjectName}|UpdateNotice`) ?? {}) ?? undefined;
-		if (moduleUpdateNotice?.Type === "Notification") {
-			ShowUpdatedNotification(moduleUpdateNotice?.Name ?? "Unknown Spicetify Extension", fromVersion, version, versionDistance);
-		}
+		
+		// Cleanup Localsotage
+		localStorage.removeItem(`${ProjectName}|UpdateNotice`);
+		localStorage.removeItem(LastFetchedVersionKey);
 	}
-	
-	// Cleanup Localsotage
-	localStorage.removeItem(`${ProjectName}|UpdateNotice`);
-	localStorage.removeItem(LastFetchedVersionKey);
 }
 
 // Now handle receiving our version updates
