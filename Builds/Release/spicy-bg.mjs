@@ -36,25 +36,26 @@ await new Promise(
 	}
 )
 
-const ShowUpdatedNotification = (name, fromVersion, toVersion, versionDistance) => {
+const ShowUpdatedNotification = (name, fromVersion = undefined, toVersion = undefined, versionDistance = undefined) => {
 	Spicetify.Snackbar.enqueueSnackbar(
 		Spicetify.React.createElement(
 			"div",
 			{
 				dangerouslySetInnerHTML: {
 					__html: `<h3>${name} Updated!</h3>
-					<span style = 'opacity: 0.75;'>Version ${fromVersion} -> ${toVersion}</span>`.trim()
+					${(fromVersion !== undefined && toVersion !== undefined) ? `<span style = 'opacity: 0.75;'>Version ${fromVersion} -> ${toVersion}</span>` : ""}`.trim()
 				}
 			}
 		), {
 			variant: (
-				(versionDistance.Major > 0) ? "success"
-				: (
-					(versionDistance.Major < 0)
-					|| (versionDistance.Minor < 0)
-					|| (versionDistance.Patch < 0)
-				) ? "warning"
-				: "info"
+				versionDistance === undefined ? "info"
+				: (versionDistance?.Major > 0) ? "success"
+					: (
+						(versionDistance?.Major < 0)
+						|| (versionDistance.Minor < 0)
+						|| (versionDistance.Patch < 0)
+					) ? "warning"
+					: "info"
 			),
 			autoHideDuration: 5000
 		}
@@ -162,10 +163,10 @@ const LastFetchedVersionKey = `${ProjectName}|LastFetchedVersion`;
 	if (storedLastVersion !== null && storedLastVersion !== currentVersion) {
 		const fromVersion = storedLastVersion;
 		const toVersion = currentVersion;
-		const fromVersionInformation = ((fromVersion === undefined) ? undefined : GetVersionInformation(fromVersion))
-		const toVersionInformation = GetVersionInformation(toVersion)
+		const fromVersionInformation = ((fromVersion === undefined) ? undefined : GetVersionInformation(fromVersion));
+		const toVersionInformation = ((toVersion === undefined) ? undefined : GetVersionInformation(toVersion));
 		const versionDistance = (
-			(fromVersionInformation === undefined) ? undefined
+			(fromVersionInformation === undefined || toVersionInformation === undefined) ? undefined
 			: {
 				Major: (toVersionInformation.Major - fromVersionInformation.Major),
 				Minor: (toVersionInformation.Minor - fromVersionInformation.Minor),
@@ -179,6 +180,7 @@ const LastFetchedVersionKey = `${ProjectName}|LastFetchedVersion`;
 				ShowUpdatedNotification(moduleUpdateNotice?.Name ?? "Unknown Spicetify Extension", fromVersion, version, versionDistance);
 			}
 		}
+		ShowUpdatedNotification(moduleUpdateNotice?.Name ?? "Unknown Spicetify Extension", undefined, undefined, undefined);
 		
 		// Cleanup Localsotage
 		localStorage.removeItem(`${ProjectName}|UpdateNotice`);
