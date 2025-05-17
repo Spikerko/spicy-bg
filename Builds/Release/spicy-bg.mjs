@@ -121,7 +121,7 @@ const UpdateVersion = (toVersion) => {
 				// Store our maid (and if we are already destroyed, reload the page)
 				activeMaid = module.default
 				if (activeMaid.IsDestroyed()) {
-					localStorage.setItem(BucketURL, fromVersion) // This is so we can show the notification
+					localStorage.setItem(`${ProjectName}|StoredVersion`, fromVersion) // This is so we can show the notification
 					return globalThis.location.reload()
 				}
 
@@ -129,7 +129,6 @@ const UpdateVersion = (toVersion) => {
 				if (versionDistance !== undefined) {
 					if (module.UpdateNotice.Type === "Notification") {
 						ShowUpdatedNotification(module.UpdateNotice.Name, fromVersion, toVersion, versionDistance)
-						localStorage.setItem(`${BucketURL}|UpdateNotice`, JSON.stringify(module.UpdateNotice))
 					}
 				}
 
@@ -155,39 +154,6 @@ let cameFromReload = false
 	}
 }
 
-const LastFetchedVersionKey = `${ProjectName}|LastFetchedVersion`;
-
-{
-	// Show Update Notice after the page was reloaded
-	const storedLastVersion = localStorage.getItem(LastFetchedVersionKey)
-	if (storedLastVersion !== null && storedLastVersion !== currentVersion) {
-		const fromVersion = storedLastVersion;
-		const toVersion = currentVersion;
-		const fromVersionInformation = ((fromVersion === undefined) ? undefined : GetVersionInformation(fromVersion));
-		const toVersionInformation = ((toVersion === undefined) ? undefined : GetVersionInformation(toVersion));
-		const versionDistance = (
-			(fromVersionInformation === undefined || toVersionInformation === undefined) ? undefined
-			: {
-				Major: (toVersionInformation.Major - fromVersionInformation.Major),
-				Minor: (toVersionInformation.Minor - fromVersionInformation.Minor),
-				Patch: (toVersionInformation.Patch - fromVersionInformation.Patch)
-			}
-		)
-		if (versionDistance !== undefined) {
-			// Show Update Notice
-			const moduleUpdateNotice = JSON.parse(localStorage.getItem(`${ProjectName}|UpdateNotice`) ?? {}) ?? undefined;
-			if (moduleUpdateNotice?.Type === "Notification") {
-				ShowUpdatedNotification(moduleUpdateNotice?.Name ?? "Unknown Spicetify Extension", fromVersion, version, versionDistance);
-			}
-		}
-		ShowUpdatedNotification(moduleUpdateNotice?.Name ?? "Unknown Spicetify Extension", undefined, undefined, undefined);
-		
-		// Cleanup Localsotage
-		localStorage.removeItem(`${ProjectName}|UpdateNotice`);
-		localStorage.removeItem(LastFetchedVersionKey);
-	}
-}
-
 // Now handle receiving our version updates
 {
 	const GetLatestVersion = () => (
@@ -195,7 +161,6 @@ const LastFetchedVersionKey = `${ProjectName}|LastFetchedVersion`;
 		.then(response => response.text())
 		.then(version => {
 			UpdateVersion(version)
-			localStorage.setItem(LastFetchedVersionKey, version);
 		})
 		.catch(() => setTimeout(GetLatestVersion, 1000))
 	)

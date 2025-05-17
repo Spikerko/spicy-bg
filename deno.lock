@@ -9,8 +9,8 @@
     "jsr:@oak/commons@0.10": "0.10.2",
     "jsr:@oak/oak@16.0.0": "16.0.0",
     "jsr:@socali/modules@^4.4.1": "4.4.1",
-    "jsr:@spikerko/spices@*": "1.3.2",
-    "jsr:@spikerko/spices@^1.3.2": "1.3.2",
+    "jsr:@spikerko/spices@*": "1.3.3",
+    "jsr:@spikerko/spices@^1.3.3": "1.3.3",
     "jsr:@spikerko/tools@^1.1.1": "1.1.1",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.224": "0.224.0",
@@ -92,8 +92,8 @@
     "@socali/modules@4.4.1": {
       "integrity": "1a8ae6eb7279ba223413386ab72366512b1ad78503d370643d820b42cac9e966"
     },
-    "@spikerko/spices@1.3.2": {
-      "integrity": "c5009e7bfc8daff803e58b003a60baee0f55be5dc6bab990498accd3640c7af0",
+    "@spikerko/spices@1.3.3": {
+      "integrity": "f9c8209f04f042ff5718f05f91c45c3c715ecdda841450f374382c37b1341ac0",
       "dependencies": [
         "jsr:@codemonument/cliffy",
         "jsr:@luca/esbuild-deno-loader",
@@ -980,7 +980,7 @@
     "dependencies": [
       "jsr:@3d/three@0.166",
       "jsr:@socali/modules@^4.4.1",
-      "jsr:@spikerko/spices@^1.3.2",
+      "jsr:@spikerko/spices@^1.3.3",
       "jsr:@spikerko/tools@^1.1.1",
       "npm:seedrandom@^3.0.5"
     ]
