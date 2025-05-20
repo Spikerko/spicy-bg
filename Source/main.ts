@@ -22,7 +22,7 @@ import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
     TRANSITION_DURATION: 0.15,  // Transition duration in seconds
-    BLUR_AMOUNT: 40,            // Blur amount in pixels
+    BLUR_AMOUNT: 50,            // Blur amount in pixels
     ROTATION_SPEED: 0.2         // Rotation speed
 };
 
@@ -36,7 +36,11 @@ OnSpotifyReady
 .then(
     () => {
         // deno-lint-ignore no-explicit-any
-        (globalThis as any).SpicyBG = {}
+        (globalThis as any).SpicyBG = {
+            Pack: {
+                Platform: {},
+            },
+        };
         // Initialize the maid
         currentDBGMaid = GlobalMaid.Give(new Maid());
 
@@ -76,12 +80,28 @@ OnSpotifyReady
                                     placeholderHueShift
                                 });
                                 lastCoverArt = CoverArt;
+                                // deno-lint-ignore no-explicit-any
+                                (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                    Instance: currentBgElement,
+                                    LastState: {
+                                        CoverArt: CoverArt,
+                                        PlaceholderHueShift: placeholderHueShift
+                                    }
+                                }
                             } else {
                                 // Create a new background
                                 // Destroy the old one if it exists
                                 if (currentBgElement) {
                                     try {
                                         (currentBgElement as unknown as { Destroy: () => void }).Destroy();
+                                        // deno-lint-ignore no-explicit-any
+                                        (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                            Instance: currentBgElement,
+                                            LastState: {
+                                                CoverArt: CoverArt,
+                                                PlaceholderHueShift: placeholderHueShift
+                                            }
+                                        }
                                     } catch (error) {
                                         console.error("Failed to destroy background:", error);
                                     }
@@ -98,6 +118,15 @@ OnSpotifyReady
                                 // Add the "BackgroundLayer" class
                                 currentBgElement.GetCanvasElement().classList.add("SpicyBG", "BackgroundLayer");
 
+                                // deno-lint-ignore no-explicit-any
+                                (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                    Instance: currentBgElement,
+                                    LastState: {
+                                        CoverArt: CoverArt,
+                                        PlaceholderHueShift: placeholderHueShift
+                                    }
+                                }
+
                                 // Initialize with the current cover art
                                 await currentBgElement.Update({
                                     image: CoverArt,
@@ -109,6 +138,15 @@ OnSpotifyReady
 
                                 // Update the last cover art
                                 lastCoverArt = CoverArt;
+
+                                // deno-lint-ignore no-explicit-any
+                                (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                    Instance: currentBgElement,
+                                    LastState: {
+                                        CoverArt: CoverArt,
+                                        PlaceholderHueShift: placeholderHueShift
+                                    }
+                                }
                             }
                         } catch (error) {
                             console.error("Failed to create/update dynamic background:", error);
@@ -117,10 +155,26 @@ OnSpotifyReady
                             if (currentBgElement) {
                                 try {
                                     (currentBgElement as unknown as { Destroy: () => void }).Destroy();
+                                    // deno-lint-ignore no-explicit-any
+                                    (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                        Instance: currentBgElement,
+                                        LastState: {
+                                            CoverArt: CoverArt,
+                                            PlaceholderHueShift: placeholderHueShift
+                                        }
+                                    }
                                 } catch (error) {
                                     console.error("Failed to destroy background:", error);
                                 }
                                 currentBgElement = undefined;
+                                // deno-lint-ignore no-explicit-any
+                                (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                    Instance: currentBgElement,
+                                    LastState: {
+                                        CoverArt: CoverArt,
+                                        PlaceholderHueShift: placeholderHueShift
+                                    }
+                                }
                             }
 
                             // Create new Maid
@@ -140,6 +194,15 @@ OnSpotifyReady
                             // Add the "BackgroundLayer" class
                             currentBgElement.GetCanvasElement().classList.add("BackgroundLayer");
 
+                            // deno-lint-ignore no-explicit-any
+                            (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                Instance: currentBgElement,
+                                LastState: {
+                                    CoverArt: CoverArt,
+                                    PlaceholderHueShift: placeholderHueShift
+                                }
+                            }
+
                             // Initialize with the current cover art
                             await currentBgElement.Update({
                                 image: CoverArt,
@@ -151,6 +214,15 @@ OnSpotifyReady
 
                             // Update the last cover art
                             lastCoverArt = CoverArt;
+
+                            // deno-lint-ignore no-explicit-any
+                            (globalThis as any).SpicyBG.Pack.Platform.Background = {
+                                Instance: currentBgElement,
+                                LastState: {
+                                    CoverArt: CoverArt,
+                                    PlaceholderHueShift: placeholderHueShift
+                                }
+                            }
                         }
                     }
                 );
