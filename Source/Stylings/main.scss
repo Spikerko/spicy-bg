@@ -95,8 +95,7 @@
     background-position: 50% 20% !important;
   }
 
-  [data-testid="control-button-playpause"],
-  .ix_8kg3iUb9VS5SmTnBY {
+  [data-testid="control-button-playpause"] {
     svg {
       fill: #000000 !important;
     }
@@ -120,7 +119,14 @@
     color: #121212 !important;
   }
 
-  .BoxComponent-group-listRow-naked-isInteractive-minBlockSize_56px-padding_8px:hover::after {
+  .BoxComponent-group-listRow-naked-isInteractive-minBlockSize_56px-padding_8px::after,
+  .BoxComponent-group-listRow-tinted-isInteractive-minBlockSize_56px-padding_8px::after {
+    transition: background-color .2s;
+  }
+
+  .BoxComponent-group-listRow-naked-isInteractive-minBlockSize_56px-padding_8px:hover::after,
+  .BoxComponent-group-listRow-tinted-isInteractive-minBlockSize_56px-padding_8px:hover::after,
+  .StyledTabItem-tab-tabItem-useBrowserDefaultFocusStyle:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
 
@@ -142,8 +148,6 @@
   .main-contextMenu-menu:has(button[role="menuitemradio"]),
   .tLjX9htIKD_OCmEX01UN,
   .main-userWidget-box,
-  .GenericModal__overlay .GenericModal > div,
-  .GenericModal,
   .IEDOUN3mwwZhHVziC03a:focus-within,
   .BoxComponent-group-listRow-naked-isInteractive-minBlockSize_56px:hover::after,
   .pIxPdfuNasUDLbEDmuK_,
@@ -154,10 +158,17 @@
   .marketplace-tabBar-active,
   .marketplace-header .Dropdown-control,
   .marketplace-content .main-card-card,
-  .main-embedWidgetGenerator-container,
-  .jW4eWdr_LUeOXwPpKhWG {
+  .jW4eWdr_LUeOXwPpKhWG,
+  .BoxComponent-group-card-naked-isInteractive-padding_tighter:hover::after {
     background-color: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(30px) !important;
+  }
+
+  .GenericModal__overlay .GenericModal > div,
+  .GenericModal,
+  .main-embedWidgetGenerator-container {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(20px) !important;
   }
 
   .button-module__button___hf2qg_marketplace {
@@ -176,7 +187,7 @@
   .GenericModal__overlay .GenericModal > div,
   .GenericModal,
   .main-embedWidgetGenerator-container {
-    max-height: 80vh !important;
+    max-height: 85vh !important;
     border-radius: 8px !important;
   }
 
@@ -190,7 +201,8 @@
   .qyKJPLjz8o4jnbk92JOn,
   .qyKJPLjz8o4jnbk92JOn:hover,
   .mKUj4tXOjumlcv0q9Qta,
-  .mKUj4tXOjumlcv0q9Qta:hover {
+  .mKUj4tXOjumlcv0q9Qta:hover,
+  .GOcsybnoHYyJGQGDRuwj {
     background-color: rgba(255, 255, 255, 0.05) !important;
     backdrop-filter: blur(30px) !important;
   }
@@ -373,6 +385,24 @@
   .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .main-entityHeader-imageContainer {
     left: 0;
   }
+
+  
+  .Root__top-container:has(.Root__nav-bar.TkqXOzhmCCuE6YI3hlgA) .Root__main-view {
+    display: none;
+  }
+
+  .GOcsybnoHYyJGQGDRuwj {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .ffFwfKcPDbmAPLXzxzKq {
+    border-radius: var(--section-border-radius, 8px);
+  }
+
+  .main-trackList-trackListRow {
+    transition: background-color .2s;
+  }
 }
 
 @keyframes GenericModal_ScaleIn {
@@ -383,7 +413,7 @@
     scale: 1;
   }
   65% {
-    scale: 1.05;
+    scale: 1.025;
   }
   100% {
     scale: 1;
