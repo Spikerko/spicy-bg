@@ -12,8 +12,9 @@ const GetArtistsProfilePicture = async (ArtistId: string): Promise<string | unde
     }
     const responseRequest = await Spotify.GraphQL.Request(
         Spotify.GraphQL.Definitions.queryArtistOverview,
-        { uri: `spotify:artist:${ArtistId}`, locale: Spotify.Locale._locale }
+        { uri: `spotify:artist:${ArtistId}`, locale: Spotify.Locale._locale, includePrerelease: false }
     )
+    console.log("responseRequest", responseRequest, ArtistId);
     if (
         !responseRequest.data ||
         !responseRequest.data.artistUnion ||
