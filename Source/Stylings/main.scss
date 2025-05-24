@@ -5,6 +5,7 @@
   --spice-rgb-sidebar: unset;
   --spice-main-elevated: unset;
   --background-elevated-highlight: transparent;
+  --spice-highlight: rgba(168, 168, 168, 0.253);
 }
 
 .SkeletonLoading {
@@ -77,14 +78,14 @@
     background-color: unset !important;
   }
 
-  .wozXSN04ZBOkhrsuY5i2,
-  .main-entityHeader-background {
-    height: 78vh !important;
-  }
-
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage {
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage,
+  .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage {
     height: 84.5vh !important;
     transition: height .35s ease-out;
+  }
+
+  .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage {
+    height: 88vh !important;
   }
 
   .main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast {
@@ -101,17 +102,24 @@
     }
   }
 
-  .main-view-container .under-main-view div {
+  .main-view-container {
+    .under-main-view div {
+      .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
+      .main-entityHeader-background.main-entityHeader-gradient {
+        filter: brightness(0.8) blur(var(--blur-strength, 0px)) saturate(var(--saturation-strength, 1));
+        mask-image: linear-gradient(to top, transparent, black 55%);
+        scale: 1.025;
+        height: 78vh !important;
+        transition: mask-image .5s, height .5s !important;
+      }
+    }
+  }
+
+  .main-view-container:has(.main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast) {
     .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
     .main-entityHeader-background.main-entityHeader-gradient {
-      /* --bottom-clip: 0%; */
-      /* opacity: 0.95 !important; */
-      filter: brightness(0.75);
-     /*  clip-path: inset(0 0 var(--bottom-clip) 0); */
-      transition: none !important;
-      -webkit-mask-image: linear-gradient(to top, transparent, black 55%);
-      mask-image: linear-gradient(to top, transparent, black 55%);
-      scale: 1.05;
+      mask-image: linear-gradient(to top, transparent, black 0%);
+      height: 100% !important;
     }
   }
 
@@ -159,7 +167,14 @@
   .marketplace-header .Dropdown-control,
   .marketplace-content .main-card-card,
   .jW4eWdr_LUeOXwPpKhWG,
-  .BoxComponent-group-card-naked-isInteractive-padding_tighter:hover::after {
+  .BoxComponent-group-card-naked-isInteractive-padding_tighter:hover::after,
+  .main-card-card,
+  .main-cardImage-imageWrapper,
+  .main-topBar-button,
+  .main-topBar-whatsNewFeed,
+  .main-topBar-buddyFeed,
+  .main-userWidget-boxCondensed,
+  .main-home-filterChipsSection {
     background-color: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(30px) !important;
   }
@@ -219,8 +234,13 @@
     border-radius: 4px;
   }
 
-  .IYex0sXu8fnCz1FqFbRe {
+  .IYex0sXu8fnCz1FqFbRe,
+  .a2NTH51fJWzWsds0OYv_:after{
     background: unset !important;
+  }
+
+  .a2NTH51fJWzWsds0OYv_ {
+    mask-image: linear-gradient(to left, transparent, black 5%);
   }
 
   .Root__right-sidebar:has(.main-nowPlayingView-section, canvas) {
@@ -322,6 +342,10 @@
     background-color: transparent !important;
   }
 
+  .artist-artistOverview-artistOverviewContent {
+    background-color: unset !important;
+  }
+
   /* Video element styling */
   aside video {
     filter: opacity(0.75) brightness(0.5) !important;
@@ -362,23 +386,29 @@
     --ProfilePictureWidth: clamp(128px,128px + (var(--main-view-grid-width) - 600px)/424*104,232px);
   }
 
+  .os-host .contentSpacing.main-entityHeader-container.main-entityHeader-withBackgroundImage {
+    --ProfilePictureWidth: clamp(128px,128px + (100vw - var(--left-sidebar-width,0px) - var(--panel-width,0px) - 600px)/424*104,232px);
+  }
   .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .main-entityHeader-imageContainer {
     position: relative;
     left: calc(var(--ProfilePictureWidth)* -1 - 50px);
     transition: left .4s;
   }
 
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage .eFZahdafW8vQ7xY1kfBg {
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage .eFZahdafW8vQ7xY1kfBg,
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .main-entityHeader-headerText {
     margin-left: 5px;
   }
 
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .eFZahdafW8vQ7xY1kfBg {
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .eFZahdafW8vQ7xY1kfBg,
+  .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .main-entityHeader-headerText {
     position: relative;
-    left: calc(var(--ProfilePictureWidth)* -1 - 24px);
+    left: calc(var(--ProfilePictureWidth)* -1 - 26px);
     transition: left .4s;
   }
 
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .eFZahdafW8vQ7xY1kfBg {
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .eFZahdafW8vQ7xY1kfBg,
+  .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .main-entityHeader-headerText {
     left: 0;
   }
 
