@@ -1,11 +1,11 @@
-:root:has(.SpicyBG) {
+:root:has(.SpicyBG.BackgroundLayer) {
   --spice-main: #00000012;
   --spice-sidebar: unset;
   --spice-rgb-main: unset;
   --spice-rgb-sidebar: unset;
   --spice-main-elevated: unset;
   --background-elevated-highlight: transparent;
-  --spice-highlight: rgba(168, 168, 168, 0.253);
+  --spice-highlight: #a8a8a841;
 }
 
 .SkeletonLoading {
@@ -106,11 +106,12 @@
     .under-main-view div {
       .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
       .main-entityHeader-background.main-entityHeader-gradient {
-        filter: brightness(0.8) blur(var(--blur-strength, 0px)) saturate(var(--saturation-strength, 1));
-        mask-image: linear-gradient(to top, transparent, black 55%);
+        filter: brightness(var(--brightness-strength, 0.8)) blur(var(--blur-strength, 0px)) saturate(var(--saturation-strength, 1));
+        mask-image: linear-gradient(to top, transparent, black var(--mask-percentage, 55%));
         scale: 1.025;
         height: 78vh !important;
-        transition: mask-image .5s, height .5s !important;
+        transform: rotate(var(--rotation-strength, 0deg));
+        transition: height .5s !important;
       }
     }
   }
@@ -118,7 +119,7 @@
   .main-view-container:has(.main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast) {
     .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
     .main-entityHeader-background.main-entityHeader-gradient {
-      mask-image: linear-gradient(to top, transparent, black 0%);
+      /* animation: BackgroundRotation 10s linear infinite; */
       height: 100% !important;
     }
   }
@@ -140,7 +141,7 @@
 
   .main-contextMenu-tippy {
     --generic-tooltip-background-color: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(30px) !important;
+    backdrop-filter: blur(50px) !important;
   }
 
   .NiqTdDnFi5KAXoGukrdo,
@@ -174,9 +175,29 @@
   .main-topBar-whatsNewFeed,
   .main-topBar-buddyFeed,
   .main-userWidget-boxCondensed,
-  .main-home-filterChipsSection {
+  .main-home-filterChipsSection,
+  .ViewControl,
+  .main-popper-container.main-devicePicker-tooltip,
+  .hcuLp8V4uEEfWZ4k6aLV:hover,
+  .main-popper-arrow, .main-popper-arrow:before,
+  .artist-artistAbout-container {
     background-color: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(30px) !important;
+    backdrop-filter: blur(50px) !important;
+  }
+
+  .main-popper-arrow, .main-popper-arrow:before {
+    clip-path: polygon(50% 50%, 100% 50%, 50% 100%, 0% 50%);
+  }
+
+  .main-popper-arrow:before {
+    -webkit-transform: none !important;
+    transform: none !important;
+  }
+
+  .main-yourLibraryX-isScrolled,
+  .x-entityImage-imageContainer {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
   }
 
   .GenericModal__overlay .GenericModal > div,
@@ -235,7 +256,8 @@
   }
 
   .IYex0sXu8fnCz1FqFbRe,
-  .a2NTH51fJWzWsds0OYv_:after{
+  .a2NTH51fJWzWsds0OYv_:after,
+  .VqUjiYOlfxlk_lFOusZ7 {
     background: unset !important;
   }
 
@@ -253,8 +275,8 @@
     --background-tinted-base: var(--background-tint);
   }
 
-  .Root__right-sidebar:has(.main-nowPlayingView-section, canvas)
-    .main-nowPlayingView-content {
+  .Root__right-sidebar:has(.main-nowPlayingView-section, canvas) .main-nowPlayingView-content,
+  .lyrics-lyricsContainer-Provider {
     background: transparent;
   }
 
@@ -338,7 +360,9 @@
     --decorative-base: #000000;
   }
 
-  .lyrics-lyrics-background {
+  .lyrics-lyrics-background,
+  .hcuLp8V4uEEfWZ4k6aLV,
+  .lyrics-lyricsContainer-LyricsBackground {
     background-color: transparent !important;
   }
 
@@ -432,6 +456,23 @@
 
   .main-trackList-trackListRow {
     transition: background-color .2s;
+  }
+
+  #SpicyLyricsPage .LyricsContainer .LyricsContent {
+    --ImageMask: linear-gradient(180deg, transparent 0, transparent 16px, #000000 64px, #000000 calc(100% - 64px), transparent calc(100% - 16px), transparent)
+  }
+
+  .main-tag-container {
+    color: #000000;
+  }
+}
+
+@keyframes BackgroundRotation {
+  0% {
+    transform: rotate(var(--rotation-strength, 0deg));
+  }
+  100% {
+    transform: rotate(calc(360deg - var(--rotation-strength, 0deg)));
   }
 }
 
