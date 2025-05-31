@@ -18,7 +18,7 @@ import { Maid } from "@socali/modules/Maid";
 import { Timeout } from "@socali/modules/Scheduler";
 import { BackgroundToggle, DeregisterBackgroundToggle, RegisterBackgroundToggle, GetToggleSignal } from "./Tools/BackgroundToggle.ts";
 import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
-import "./Components/PopupModal/PopupModal.ts";
+
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
     TRANSITION_DURATION: 0.15,  // Transition duration in seconds
