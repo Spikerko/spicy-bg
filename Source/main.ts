@@ -18,7 +18,7 @@ import { Maid } from "@socali/modules/Maid";
 import { Timeout } from "@socali/modules/Scheduler";
 import { BackgroundToggle, DeregisterBackgroundToggle, RegisterBackgroundToggle, GetToggleSignal } from "./Tools/BackgroundToggle.ts";
 import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
-
+import "./Components/PopupModal/PopupModal.ts";
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
     TRANSITION_DURATION: 0.15,  // Transition duration in seconds
@@ -29,14 +29,14 @@ const BG_CONFIG = {
 // Configuration for Header Image scroll effects
 const HEADER_IMAGE_EFFECT_CONFIG = {
     SCALE: {
-        INITIAL_VALUE: 1.025,
-        TARGET_VALUE: 1.00,
+        INITIAL_VALUE: 1.05,
+        TARGET_VALUE: 1.5,
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
     OPACITY: {
         INITIAL_VALUE: 1.0,
-        TARGET_VALUE: 0.6,
+        TARGET_VALUE: 0.2,
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
         SCROLLED_PAST_THRESHOLD: 0.65, // Opacity value at which "ScrolledPast" class is applied
@@ -49,7 +49,25 @@ const HEADER_IMAGE_EFFECT_CONFIG = {
     },
     SATURATION: {
         INITIAL_VALUE: 1,  // Assuming 1 is normal saturation (100%)
-        TARGET_VALUE: 1.05, // Target saturation (e.g., 50%)
+        TARGET_VALUE: 1.5, // Target saturation (e.g., 50%)
+        SCROLL_PERCENTAGE_START: 0,
+        SCROLL_PERCENTAGE_END: 100,
+    },
+    ROTATION: {
+        INITIAL_VALUE: 0,  // degrees
+        TARGET_VALUE: 0, // degrees
+        SCROLL_PERCENTAGE_START: 0,
+        SCROLL_PERCENTAGE_END: 100,
+    },
+    MASK_PERCENTAGE: {
+        INITIAL_VALUE: 55,  // %
+        TARGET_VALUE: 0, // %
+        SCROLL_PERCENTAGE_START: 0,
+        SCROLL_PERCENTAGE_END: 100,
+    },
+    BRIGHTNESS: {
+        INITIAL_VALUE: 0.8, // Initial brightness
+        TARGET_VALUE: 1.00, // Target brightness
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
@@ -306,7 +324,6 @@ OnSpotifyReady
 
             const historyListenerCallback = (event: HistoryLocation) => {
                 if (lastLocation === event.pathname) return;
-                console.log("Navigated!", event.pathname)
                 lastLocation = event.pathname;
 
                 if (NavigationMaid !== undefined) {
@@ -346,6 +363,9 @@ OnSpotifyReady
                                         BGImage.style.scale = "1";
                                         BGImage.style.removeProperty("--blur-strength");
                                         BGImage.style.removeProperty("--saturation-strength");
+                                        BGImage.style.removeProperty("--rotation-strength");
+                                        BGImage.style.removeProperty("--mask-percentage");
+                                        BGImage.style.removeProperty("--brightness-strength");
                                     }
 
                                     if (BackgroundToggle.Enabled) {
@@ -496,6 +516,63 @@ OnSpotifyReady
                                         BGImage.style.removeProperty("--saturation-strength");
                                     }
 
+                                    // Calculate Rotation
+                                    const rotationConfig = HEADER_IMAGE_EFFECT_CONFIG.ROTATION;
+                                    let rotationEffectProgress = 0;
+                                    if (fadePercentage >= rotationConfig.SCROLL_PERCENTAGE_END) {
+                                        rotationEffectProgress = 1;
+                                    } else if (fadePercentage > rotationConfig.SCROLL_PERCENTAGE_START) {
+                                        const activeRange = rotationConfig.SCROLL_PERCENTAGE_END - rotationConfig.SCROLL_PERCENTAGE_START;
+                                        if (activeRange > 0) {
+                                            rotationEffectProgress = (fadePercentage - rotationConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                        }
+                                    }
+                                    rotationEffectProgress = Math.max(0, Math.min(1, rotationEffectProgress));
+                                    const rotationValue = rotationConfig.INITIAL_VALUE + rotationEffectProgress * (rotationConfig.TARGET_VALUE - rotationConfig.INITIAL_VALUE);
+                                    if (BackgroundToggle.Enabled) {
+                                        BGImage.style.setProperty("--rotation-strength", `${rotationValue}deg`);
+                                    } else {
+                                        BGImage.style.removeProperty("--rotation-strength");
+                                    }
+
+                                    // Calculate Mask Percentage
+                                    const maskConfig = HEADER_IMAGE_EFFECT_CONFIG.MASK_PERCENTAGE;
+                                    let maskEffectProgress = 0;
+                                    if (fadePercentage >= maskConfig.SCROLL_PERCENTAGE_END) {
+                                        maskEffectProgress = 1;
+                                    } else if (fadePercentage > maskConfig.SCROLL_PERCENTAGE_START) {
+                                        const activeRange = maskConfig.SCROLL_PERCENTAGE_END - maskConfig.SCROLL_PERCENTAGE_START;
+                                        if (activeRange > 0) {
+                                            maskEffectProgress = (fadePercentage - maskConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                        }
+                                    }
+                                    maskEffectProgress = Math.max(0, Math.min(1, maskEffectProgress));
+                                    const maskValue = maskConfig.INITIAL_VALUE + maskEffectProgress * (maskConfig.TARGET_VALUE - maskConfig.INITIAL_VALUE);
+                                    if (BackgroundToggle.Enabled) {
+                                        BGImage.style.setProperty("--mask-percentage", `${maskValue}%`);
+                                    } else {
+                                        BGImage.style.removeProperty("--mask-percentage");
+                                    }
+
+                                    // Calculate Brightness
+                                    const brightnessConfig = HEADER_IMAGE_EFFECT_CONFIG.BRIGHTNESS;
+                                    let brightnessEffectProgress = 0;
+                                    if (fadePercentage >= brightnessConfig.SCROLL_PERCENTAGE_END) {
+                                        brightnessEffectProgress = 1;
+                                    } else if (fadePercentage > brightnessConfig.SCROLL_PERCENTAGE_START) {
+                                        const activeRange = brightnessConfig.SCROLL_PERCENTAGE_END - brightnessConfig.SCROLL_PERCENTAGE_START;
+                                        if (activeRange > 0) {
+                                            brightnessEffectProgress = (fadePercentage - brightnessConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                        }
+                                    }
+                                    brightnessEffectProgress = Math.max(0, Math.min(1, brightnessEffectProgress));
+                                    const brightnessValue = brightnessConfig.INITIAL_VALUE + brightnessEffectProgress * (brightnessConfig.TARGET_VALUE - brightnessConfig.INITIAL_VALUE);
+                                    if (BackgroundToggle.Enabled) {
+                                        BGImage.style.setProperty("--brightness-strength", brightnessValue.toString());
+                                    } else {
+                                        BGImage.style.removeProperty("--brightness-strength");
+                                    }
+
                                     Element.addEventListener("scroll", () => {
                                         const QueryContainer: HTMLElement | undefined = HeaderContent;
                                         if (!QueryContainer) return;
@@ -507,6 +584,9 @@ OnSpotifyReady
                                             BGImage.style.scale = "1";
                                             BGImage.style.removeProperty("--blur-strength");
                                             BGImage.style.removeProperty("--saturation-strength");
+                                            BGImage.style.removeProperty("--rotation-strength");
+                                            BGImage.style.removeProperty("--mask-percentage");
+                                            BGImage.style.removeProperty("--brightness-strength");
                                             return;
                                         }
 
@@ -582,6 +662,51 @@ OnSpotifyReady
                                         saturationEffectProgress = Math.max(0, Math.min(1, saturationEffectProgress));
                                         const saturationValue = saturationConfig.INITIAL_VALUE + saturationEffectProgress * (saturationConfig.TARGET_VALUE - saturationConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--saturation-strength", saturationValue.toString());
+
+                                        // Calculate Rotation
+                                        const rotationConfig = HEADER_IMAGE_EFFECT_CONFIG.ROTATION;
+                                        let rotationEffectProgress = 0;
+                                        if (fadePercentage >= rotationConfig.SCROLL_PERCENTAGE_END) {
+                                            rotationEffectProgress = 1;
+                                        } else if (fadePercentage > rotationConfig.SCROLL_PERCENTAGE_START) {
+                                            const activeRange = rotationConfig.SCROLL_PERCENTAGE_END - rotationConfig.SCROLL_PERCENTAGE_START;
+                                            if (activeRange > 0) {
+                                                rotationEffectProgress = (fadePercentage - rotationConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                            }
+                                        }
+                                        rotationEffectProgress = Math.max(0, Math.min(1, rotationEffectProgress));
+                                        const rotationValue = rotationConfig.INITIAL_VALUE + rotationEffectProgress * (rotationConfig.TARGET_VALUE - rotationConfig.INITIAL_VALUE);
+                                        BGImage.style.setProperty("--rotation-strength", `${rotationValue}deg`);
+
+                                        // Calculate Mask Percentage
+                                        const maskConfig = HEADER_IMAGE_EFFECT_CONFIG.MASK_PERCENTAGE;
+                                        let maskEffectProgress = 0;
+                                        if (fadePercentage >= maskConfig.SCROLL_PERCENTAGE_END) {
+                                            maskEffectProgress = 1;
+                                        } else if (fadePercentage > maskConfig.SCROLL_PERCENTAGE_START) {
+                                            const activeRange = maskConfig.SCROLL_PERCENTAGE_END - maskConfig.SCROLL_PERCENTAGE_START;
+                                            if (activeRange > 0) {
+                                                maskEffectProgress = (fadePercentage - maskConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                            }
+                                        }
+                                        maskEffectProgress = Math.max(0, Math.min(1, maskEffectProgress));
+                                        const maskValue = maskConfig.INITIAL_VALUE + maskEffectProgress * (maskConfig.TARGET_VALUE - maskConfig.INITIAL_VALUE);
+                                        BGImage.style.setProperty("--mask-percentage", `${maskValue}%`);
+
+                                        // Calculate Brightness
+                                        const brightnessConfig = HEADER_IMAGE_EFFECT_CONFIG.BRIGHTNESS;
+                                        let brightnessEffectProgress = 0;
+                                        if (fadePercentage >= brightnessConfig.SCROLL_PERCENTAGE_END) {
+                                            brightnessEffectProgress = 1;
+                                        } else if (fadePercentage > brightnessConfig.SCROLL_PERCENTAGE_START) {
+                                            const activeRange = brightnessConfig.SCROLL_PERCENTAGE_END - brightnessConfig.SCROLL_PERCENTAGE_START;
+                                            if (activeRange > 0) {
+                                                brightnessEffectProgress = (fadePercentage - brightnessConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                            }
+                                        }
+                                        brightnessEffectProgress = Math.max(0, Math.min(1, brightnessEffectProgress));
+                                        const brightnessValue = brightnessConfig.INITIAL_VALUE + brightnessEffectProgress * (brightnessConfig.TARGET_VALUE - brightnessConfig.INITIAL_VALUE);
+                                        BGImage.style.setProperty("--brightness-strength", brightnessValue.toString());
                                     }, { signal: EventAbortController.signal });
                                 })
                                 NavigationMaid?.Give(() => HeaderContentWhentil?.Cancel());
@@ -627,6 +752,9 @@ OnSpotifyReady
                         BGImage.style.scale = "1";
                         BGImage.style.removeProperty("--blur-strength");
                         BGImage.style.removeProperty("--saturation-strength");
+                        BGImage.style.removeProperty("--rotation-strength");
+                        BGImage.style.removeProperty("--mask-percentage");
+                        BGImage.style.removeProperty("--brightness-strength");
                     }
 
                     const ContentSpacing = HeaderContent?.querySelector<HTMLElement>(".iWTIFTzhRZT0rCD0_gOK");
