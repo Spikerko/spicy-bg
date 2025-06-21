@@ -22,34 +22,34 @@ import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
     TRANSITION_DURATION: 0.15,  // Transition duration in seconds
-    BLUR_AMOUNT: 50,            // Blur amount in pixels
-    ROTATION_SPEED: 0.2         // Rotation speed
+    BLUR_AMOUNT: 45,            // Blur amount in pixels
+    ROTATION_SPEED: 0.3         // Rotation speed
 };
 
 // Configuration for Header Image scroll effects
 const HEADER_IMAGE_EFFECT_CONFIG = {
     SCALE: {
-        INITIAL_VALUE: 1.05,
-        TARGET_VALUE: 1.5,
+        INITIAL_VALUE: 1.00,
+        TARGET_VALUE: 1.2,
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
     OPACITY: {
         INITIAL_VALUE: 1.0,
-        TARGET_VALUE: 0.2,
+        TARGET_VALUE: 0.95,
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
-        SCROLLED_PAST_THRESHOLD: 0.65, // Opacity value at which "ScrolledPast" class is applied
+        SCROLLED_PAST_THRESHOLD: 0.985, // Opacity value at which "ScrolledPast" class is applied
     },
     BLUR: {
         INITIAL_VALUE: 0,  // px
-        TARGET_VALUE: 20, // px (Derived from old 100 / DIVISOR)
+        TARGET_VALUE: 0, // px (Derived from old 100 / DIVISOR)
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
     SATURATION: {
         INITIAL_VALUE: 1,  // Assuming 1 is normal saturation (100%)
-        TARGET_VALUE: 1.5, // Target saturation (e.g., 50%)
+        TARGET_VALUE: 1, // Target saturation (e.g., 50%)
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
@@ -60,14 +60,20 @@ const HEADER_IMAGE_EFFECT_CONFIG = {
         SCROLL_PERCENTAGE_END: 100,
     },
     MASK_PERCENTAGE: {
-        INITIAL_VALUE: 55,  // %
-        TARGET_VALUE: 0, // %
+        INITIAL_VALUE: 75,  // %
+        TARGET_VALUE: 75, // %
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
     BRIGHTNESS: {
         INITIAL_VALUE: 0.8, // Initial brightness
-        TARGET_VALUE: 1.00, // Target brightness
+        TARGET_VALUE: 0.8, // Target brightness
+        SCROLL_PERCENTAGE_START: 0,
+        SCROLL_PERCENTAGE_END: 100,
+    },
+    HEIGHT: {
+        INITIAL_VALUE: 78, // vh
+        TARGET_VALUE: 0, // vh
         SCROLL_PERCENTAGE_START: 0,
         SCROLL_PERCENTAGE_END: 100,
     },
@@ -346,7 +352,7 @@ OnSpotifyReady
                 scrollNodeWhentil = Whentil.When(() => isLegacy ? document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node .os-viewport`) : document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node [data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll"]`),
                 (Element: HTMLElement | null) => {
                     if (!Element) return;
-                    UMVWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`.main-view-container .under-main-view`),
+                    UMVWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`.main-view-container .under-main-view`) ?? document.querySelector<HTMLElement>(`.main-view-container .before-scroll-node`),
                         (UMVElement: HTMLElement | null) => {
                             if (!UMVElement) return;
                             bgImageWhentil = Whentil.When(() => UMVElement.querySelector<HTMLElement>("div .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD") ?? UMVElement.querySelector<HTMLElement>("div .main-entityHeader-background.main-entityHeader-gradient"),
@@ -366,6 +372,7 @@ OnSpotifyReady
                                         BGImage.style.removeProperty("--rotation-strength");
                                         BGImage.style.removeProperty("--mask-percentage");
                                         BGImage.style.removeProperty("--brightness-strength");
+                                        BGImage.style.removeProperty("--height");
                                     }
 
                                     if (BackgroundToggle.Enabled) {
@@ -573,6 +580,25 @@ OnSpotifyReady
                                         BGImage.style.removeProperty("--brightness-strength");
                                     }
 
+                                    // Calculate Height
+                                    const heightConfig = HEADER_IMAGE_EFFECT_CONFIG.HEIGHT;
+                                    let heightEffectProgress = 0;
+                                    if (fadePercentage >= heightConfig.SCROLL_PERCENTAGE_END) {
+                                        heightEffectProgress = 1;
+                                    } else if (fadePercentage > heightConfig.SCROLL_PERCENTAGE_START) {
+                                        const activeRange = heightConfig.SCROLL_PERCENTAGE_END - heightConfig.SCROLL_PERCENTAGE_START;
+                                        if (activeRange > 0) {
+                                            heightEffectProgress = (fadePercentage - heightConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                        }
+                                    }
+                                    heightEffectProgress = Math.max(0, Math.min(1, heightEffectProgress));
+                                    const heightValue = heightConfig.INITIAL_VALUE + heightEffectProgress * (heightConfig.TARGET_VALUE - heightConfig.INITIAL_VALUE);
+                                    if (BackgroundToggle.Enabled) {
+                                        BGImage.style.setProperty("--height", `${heightValue}vh`);
+                                    } else {
+                                        BGImage.style.removeProperty("--height");
+                                    }
+
                                     Element.addEventListener("scroll", () => {
                                         const QueryContainer: HTMLElement | undefined = HeaderContent;
                                         if (!QueryContainer) return;
@@ -587,6 +613,7 @@ OnSpotifyReady
                                             BGImage.style.removeProperty("--rotation-strength");
                                             BGImage.style.removeProperty("--mask-percentage");
                                             BGImage.style.removeProperty("--brightness-strength");
+                                            BGImage.style.removeProperty("--height");
                                             return;
                                         }
 
@@ -707,6 +734,21 @@ OnSpotifyReady
                                         brightnessEffectProgress = Math.max(0, Math.min(1, brightnessEffectProgress));
                                         const brightnessValue = brightnessConfig.INITIAL_VALUE + brightnessEffectProgress * (brightnessConfig.TARGET_VALUE - brightnessConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--brightness-strength", brightnessValue.toString());
+
+                                        // Calculate Height
+                                        const heightConfig = HEADER_IMAGE_EFFECT_CONFIG.HEIGHT;
+                                        let heightEffectProgress = 0;
+                                        if (fadePercentage >= heightConfig.SCROLL_PERCENTAGE_END) {
+                                            heightEffectProgress = 1;
+                                        } else if (fadePercentage > heightConfig.SCROLL_PERCENTAGE_START) {
+                                            const activeRange = heightConfig.SCROLL_PERCENTAGE_END - heightConfig.SCROLL_PERCENTAGE_START;
+                                            if (activeRange > 0) {
+                                                heightEffectProgress = (fadePercentage - heightConfig.SCROLL_PERCENTAGE_START) / activeRange;
+                                            }
+                                        }
+                                        heightEffectProgress = Math.max(0, Math.min(1, heightEffectProgress));
+                                        const heightValue = heightConfig.INITIAL_VALUE + heightEffectProgress * (heightConfig.TARGET_VALUE - heightConfig.INITIAL_VALUE);
+                                        BGImage.style.setProperty("--height", `${heightValue}vh`);
                                     }, { signal: EventAbortController.signal });
                                 })
                                 NavigationMaid?.Give(() => HeaderContentWhentil?.Cancel());
@@ -746,7 +788,11 @@ OnSpotifyReady
                         HeaderContent.classList.remove("ProfilePictureLoading");
                     }
 
-                    const BGImage = document.querySelector<HTMLElement>(".main-view-container .under-main-view .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD") ?? document.querySelector<HTMLElement>(".main-view-container .under-main-view .main-entityHeader-background.main-entityHeader-gradient");
+                    const BGImage =
+                        document.querySelector<HTMLElement>(".main-view-container .under-main-view .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD") ??
+                        document.querySelector<HTMLElement>(".main-view-container .before-scroll-node .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD") ??
+                        document.querySelector<HTMLElement>(".main-view-container .under-main-view .main-entityHeader-background.main-entityHeader-gradient") ??
+                        document.querySelector<HTMLElement>(".main-view-container .before-scroll-node .main-entityHeader-background.main-entityHeader-gradient");
                     if (BGImage) {
                         BGImage.style.opacity = "1";
                         BGImage.style.scale = "1";
@@ -755,6 +801,7 @@ OnSpotifyReady
                         BGImage.style.removeProperty("--rotation-strength");
                         BGImage.style.removeProperty("--mask-percentage");
                         BGImage.style.removeProperty("--brightness-strength");
+                        BGImage.style.removeProperty("--height");
                     }
 
                     const ContentSpacing = HeaderContent?.querySelector<HTMLElement>(".iWTIFTzhRZT0rCD0_gOK");
@@ -786,13 +833,12 @@ OnSpotifyReady
                     backgroundContainer = undefined;
                 }
 
-                // Force a small delay to ensure the BackgroundToggle.Enabled state is updated
-                setTimeout(() => {
+                GlobalMaid.Give(Timeout(0.1, () => {
                     // Apply the background if it's enabled
                     if (BackgroundToggle.Enabled) {
                         applyDynamicBg();
                     }
-                }, 10);
+                }))
             };
 
             GlobalMaid.Give(GetToggleSignal().Connect(OnButtonClick))

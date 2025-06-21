@@ -80,16 +80,16 @@
 
   .main-entityHeader-container.main-entityHeader-withBackgroundImage,
   .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage {
-    height: 84.5vh !important;
+    height: 75.5vh !important;
     transition: height .35s ease-out;
   }
 
   .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage {
-    height: 88vh !important;
+    height: 79.5vh !important;
   }
 
   .main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast {
-    height: 48.5vh !important;
+    height: 500px !important;
   }
 
   .XUwMufC5NCgIyRMyGXLD {
@@ -103,26 +103,27 @@
   }
 
   .main-view-container {
-    .under-main-view div {
+    .under-main-view div,
+    .before-scroll-node div {
       .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
       .main-entityHeader-background.main-entityHeader-gradient {
         filter: brightness(var(--brightness-strength, 0.8)) blur(var(--blur-strength, 0px)) saturate(var(--saturation-strength, 1));
         mask-image: linear-gradient(to top, transparent, black var(--mask-percentage, 55%));
         scale: 1.025;
-        height: 78vh !important;
+        height: var(--height, 78vh) !important;
         transform: rotate(var(--rotation-strength, 0deg));
         transition: height .5s !important;
       }
     }
   }
 
-  .main-view-container:has(.main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast) {
+  /* .main-view-container:has(.main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast) {
     .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
     .main-entityHeader-background.main-entityHeader-gradient {
-      /* animation: BackgroundRotation 10s linear infinite; */
+      animation: BackgroundRotation 10s linear infinite;
       height: 100% !important;
     }
-  }
+  } */
 
   .Ps9zgW56WZaBVLo1n3cg {
     color: #121212 !important;
