@@ -11,7 +11,7 @@
     "jsr:@socali/modules@^4.4.1": "4.4.1",
     "jsr:@spikerko/spices@*": "1.3.3",
     "jsr:@spikerko/spices@^1.3.3": "1.3.3",
-    "jsr:@spikerko/tools@^1.1.1": "1.1.1",
+    "jsr:@spikerko/tools@^1.2.3": "1.2.3",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.224": "0.224.0",
     "jsr:@std/assert@0.226": "0.226.0",
@@ -110,8 +110,8 @@
         "npm:sass"
       ]
     },
-    "@spikerko/tools@1.1.1": {
-      "integrity": "1e0b6ce83bfa15b054d5c5e18d5e52d0ca69e820930cd864f963905013ef65c8",
+    "@spikerko/tools@1.2.3": {
+      "integrity": "bafe8006f93abb5ecb36101d0e46fdfbfbb041ec91afbf6e55ab878573511f80",
       "dependencies": [
         "jsr:@3d/three@0.166.0",
         "jsr:@socali/modules"
@@ -981,7 +981,7 @@
       "jsr:@3d/three@0.166",
       "jsr:@socali/modules@^4.4.1",
       "jsr:@spikerko/spices@^1.3.3",
-      "jsr:@spikerko/tools@^1.1.1",
+      "jsr:@spikerko/tools@^1.2.3",
       "npm:seedrandom@^3.0.5"
     ]
   }
