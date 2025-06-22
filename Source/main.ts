@@ -359,7 +359,8 @@ OnSpotifyReady
                     const topbar = document.querySelector<HTMLElement>(`div.main-topBar-background`)
                     if (!topbar) return;
                 
-                    headerInterval = Interval(100/1000, () => {
+                    headerInterval = Interval(1000/1000, () => {
+                        console.log("jaja")
                         if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
                             
                             topbar.classList.add("show-header-opacity");
@@ -369,9 +370,7 @@ OnSpotifyReady
                             topbar.classList.add("hide-header-opacity");
                         }
                     NavigationMaid?.Give(headerInterval);
-                    NavigationMaid?.Give(() => artistHeaderWhentil?.Cancel());
                     GlobalMaid.Give(headerInterval);
-                    GlobalMaid.Give(Timeout(40, () => artistHeaderWhentil?.Cancel()));
                     
                 })
             })
