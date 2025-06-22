@@ -352,17 +352,13 @@ OnSpotifyReady
                 const EventAbortController = new AbortController();
                 currentEventAbortController = EventAbortController;
 
-                artistHeaderWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`div.main-topBar-topbarContent.main-entityHeader-topbarContent`) ? document.querySelector<HTMLElement>(`div.main-topBar-topbarContent.main-entityHeader-topbarContent`) : null, 
+                artistHeaderWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`div.main-topBar-topbarContent.main-entityHeader-topbarContent`), 
                 (Element: HTMLElement | null) => {
                     if (!Element) return;
-                    
 
-                    
                     const topbar = document.querySelector<HTMLElement>(`div.main-topBar-background`)
                     if (!topbar) return;
-                    
-                    
-                    
+                
                     headerInterval = Interval(100/1000, () => {
                         if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
                             
@@ -376,25 +372,7 @@ OnSpotifyReady
                     NavigationMaid?.Give(() => artistHeaderWhentil?.Cancel());
                     GlobalMaid.Give(headerInterval);
                     GlobalMaid.Give(Timeout(40, () => artistHeaderWhentil?.Cancel()));
-                    /*
-                    let wrapper = document.querySelector<HTMLElement>(".headerOpacity");
-                    if (!wrapper) {
-                        wrapper = document.createElement("div");
-                        wrapper.className = "headerOpacity"
-                        wrapper.style.opacity = "0";
-                        topbar?.parentNode?.insertBefore(wrapper, topbar);
-                        
-                        wrapper?.appendChild(topbar);
-                    }
-                    headerInterval = Interval(50/1000, () => {
-                        
-                        console.log("jaja")
-                        wrapper.style.setProperty("opacity", "0", "important");
-                        if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
-                            console.log("faded in");
-                            wrapper.style.setProperty("opacity", "0.8", "important");
-                        }
-                    });*/
+                    
                 })
             })
                 
