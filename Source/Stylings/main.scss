@@ -8,6 +8,15 @@
   --spice-highlight: #a8a8a841;
 }
 
+.show-header-opacity {
+  opacity: 0.8 !important ;
+}
+.hide-header-opacity {
+  opacity: 0 !important;
+}
+.main-topBar-background {
+  transition: opacity .5s;
+}
 .SkeletonLoading {
   --BorderRadius: 0;
   --ValueStop1: 40%;

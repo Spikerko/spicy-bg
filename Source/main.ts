@@ -15,7 +15,7 @@ import {
 import type { UpdateNoticeConfiguration } from "@spikerko/spices/AutoUpdate/UpdateNotice"
 import Whentil, { type CancelableTask } from "@spikerko/tools/Whentil";
 import { Maid } from "@socali/modules/Maid";
-import { Timeout } from "@socali/modules/Scheduler";
+import { Timeout, Interval, Scheduled } from "@socali/modules/Scheduler";
 import { BackgroundToggle, DeregisterBackgroundToggle, RegisterBackgroundToggle, GetToggleSignal } from "./Tools/BackgroundToggle.ts";
 import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
 
@@ -316,8 +316,11 @@ OnSpotifyReady
         })
 
         const isLegacy = document.querySelector<HTMLElement>(".Root__main-view .os-host") ? true : false;
+        
+        {   
+            let artistHeaderWhentil: CancelableTask | undefined = undefined;
+            let headerInterval: Scheduled;
 
-        {
             let scrollNodeWhentil: CancelableTask | undefined = undefined;
             let HeaderContentWhentil: CancelableTask | undefined = undefined;
             let UMVWhentil: CancelableTask | undefined = undefined;
@@ -349,6 +352,52 @@ OnSpotifyReady
                 const EventAbortController = new AbortController();
                 currentEventAbortController = EventAbortController;
 
+                artistHeaderWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`div.main-topBar-topbarContent.main-entityHeader-topbarContent`) ? document.querySelector<HTMLElement>(`div.main-topBar-topbarContent.main-entityHeader-topbarContent`) : null, 
+                (Element: HTMLElement | null) => {
+                    if (!Element) return;
+                    
+
+                    
+                    const topbar = document.querySelector<HTMLElement>(`div.main-topBar-background`)
+                    if (!topbar) return;
+                    
+                    
+                    
+                    headerInterval = Interval(100/1000, () => {
+                        if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
+                            
+                            topbar.classList.add("show-header-opacity");
+                            topbar.classList.remove("hide-header-opacity");
+                        } else {
+                            topbar.classList.remove("show-header-opacity");
+                            topbar.classList.add("hide-header-opacity");
+                        }
+                    NavigationMaid?.Give(headerInterval);
+                    NavigationMaid?.Give(() => artistHeaderWhentil?.Cancel());
+                    GlobalMaid.Give(headerInterval);
+                    GlobalMaid.Give(Timeout(40, () => artistHeaderWhentil?.Cancel()));
+                    /*
+                    let wrapper = document.querySelector<HTMLElement>(".headerOpacity");
+                    if (!wrapper) {
+                        wrapper = document.createElement("div");
+                        wrapper.className = "headerOpacity"
+                        wrapper.style.opacity = "0";
+                        topbar?.parentNode?.insertBefore(wrapper, topbar);
+                        
+                        wrapper?.appendChild(topbar);
+                    }
+                    headerInterval = Interval(50/1000, () => {
+                        
+                        console.log("jaja")
+                        wrapper.style.setProperty("opacity", "0", "important");
+                        if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
+                            console.log("faded in");
+                            wrapper.style.setProperty("opacity", "0.8", "important");
+                        }
+                    });*/
+                })
+            })
+                
                 scrollNodeWhentil = Whentil.When(() => isLegacy ? document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node .os-viewport`) : document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node [data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll"]`),
                 (Element: HTMLElement | null) => {
                     if (!Element) return;
@@ -767,6 +816,7 @@ OnSpotifyReady
             GlobalMaid.Give(SpotifyHistory.listen(historyListenerCallback));
             historyListenerCallback(SpotifyHistory.location);
             GlobalMaid.Give(() => scrollNodeWhentil?.Cancel())
+            GlobalMaid.Give(() => artistHeaderWhentil?.Cancel())
             GlobalMaid.Give(() => UMVWhentil?.Cancel())
             GlobalMaid.Give(() => bgImageWhentil?.Cancel());
             GlobalMaid.Give(() => currentEventAbortController?.abort());
