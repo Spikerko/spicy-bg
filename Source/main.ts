@@ -360,7 +360,6 @@ OnSpotifyReady
                     if (!topbar) return;
                 
                     headerInterval = Interval(1000/1000, () => {
-                        console.log("jaja")
                         if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
                             
                             topbar.classList.add("show-header-opacity");
