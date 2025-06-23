@@ -8,6 +8,14 @@
   --spice-highlight: #a8a8a841;
 }
 
+.show-header-opacity {
+  opacity: 1 !important ;
+  
+}
+.hide-header-opacity {
+  opacity: 0 !important;
+}
+
 .SkeletonLoading {
   --BorderRadius: 0;
   --ValueStop1: 40%;
@@ -58,7 +66,10 @@
       pointer-events: none;
     }
   }
-
+  .main-topBar-background {
+    transition: opacity .5s;
+    filter: brightness(1)
+  }
   .main-actionBarBackground-background,
   .main-entityHeader-backgroundColor,
   .XVz4BMGP5zAEE5p90mYK,
@@ -144,7 +155,7 @@
     --generic-tooltip-background-color: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(50px) !important;
   }
-
+  .main-topBar-background,
   .NiqTdDnFi5KAXoGukrdo,
   .BoxComponent-group-card-naked-isInteractive-draggable:hover::after,
   .BoxComponent-group-card-naked-isInteractive:hover::after,
@@ -154,7 +165,6 @@
   .b7r2WRiu5f9Q99qmyreh .main-topBar-searchBar:focus,
   .MGZ4oJmGVPrWsx5cT5hN,
   .AIlmv6h8bR5NY5R0VceT:hover,
-  .main-topBar-background,
   .main-contextMenu-menu:has(button[role="menuitemradio"]),
   .tLjX9htIKD_OCmEX01UN,
   .main-userWidget-box,
