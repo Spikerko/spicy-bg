@@ -5,7 +5,7 @@ import {
 	GlobalMaid,
 	HistoryLocation,
 	OnSpotifyReady,
-    ShowNotification,
+    // ShowNotification,
     SpotifyHistory
 } from "@spikerko/spices/Spicetify/Services/Session"
 import {
@@ -17,7 +17,7 @@ import Whentil, { type CancelableTask } from "@spikerko/tools/Whentil";
 import { Maid } from "@socali/modules/Maid";
 import { Timeout, Interval, Scheduled } from "@socali/modules/Scheduler";
 import { BackgroundToggle, DeregisterBackgroundToggle, RegisterBackgroundToggle, GetToggleSignal } from "./Tools/BackgroundToggle.ts";
-import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
+// import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
 
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
@@ -29,57 +29,39 @@ const BG_CONFIG = {
 // Configuration for Header Image scroll effects
 const HEADER_IMAGE_EFFECT_CONFIG = {
     SCALE: {
-        INITIAL_VALUE: 1.00,
-        TARGET_VALUE: 1.2,
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
+        INITIAL_VALUE: 1.085,
+        TARGET_VALUE: 1.00,
     },
     OPACITY: {
         INITIAL_VALUE: 1.0,
-        TARGET_VALUE: 0.95,
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
-        SCROLLED_PAST_THRESHOLD: 0.985, // Opacity value at which "ScrolledPast" class is applied
+        TARGET_VALUE: 0.85,
     },
     BLUR: {
         INITIAL_VALUE: 0,  // px
         TARGET_VALUE: 0, // px (Derived from old 100 / DIVISOR)
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
     },
     SATURATION: {
         INITIAL_VALUE: 1,  // Assuming 1 is normal saturation (100%)
         TARGET_VALUE: 1, // Target saturation (e.g., 50%)
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
     },
     ROTATION: {
         INITIAL_VALUE: 0,  // degrees
         TARGET_VALUE: 0, // degrees
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
     },
     MASK_PERCENTAGE: {
         INITIAL_VALUE: 75,  // %
-        TARGET_VALUE: 75, // %
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
+        TARGET_VALUE: 30, // %
     },
     BRIGHTNESS: {
         INITIAL_VALUE: 0.8, // Initial brightness
         TARGET_VALUE: 0.8, // Target brightness
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
     },
     HEIGHT: {
-        INITIAL_VALUE: 78, // vh
+        INITIAL_VALUE: 40, // vh
         TARGET_VALUE: 0, // vh
-        SCROLL_PERCENTAGE_START: 0,
-        SCROLL_PERCENTAGE_END: 100,
     },
     SCROLL_INPUT: { // Defines how the base fadePercentage is calculated
         IMAGE_HEIGHT_MULTIPLIER: 0.8,
-        FADE_MULTIPLIER: 3.85,
     }
 };
 
@@ -319,7 +301,7 @@ OnSpotifyReady
         
         {   
             let artistHeaderWhentil: CancelableTask | undefined = undefined;
-            let headerInterval: Scheduled;
+            let headerTextLoop: Scheduled | undefined = undefined;
 
             let scrollNodeWhentil: CancelableTask | undefined = undefined;
             let HeaderContentWhentil: CancelableTask | undefined = undefined;
@@ -352,27 +334,28 @@ OnSpotifyReady
                 const EventAbortController = new AbortController();
                 currentEventAbortController = EventAbortController;
 
-                artistHeaderWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`div.main-topBar-topbarContent.main-entityHeader-topbarContent`), 
+                artistHeaderWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`.main-topBar-container .main-topBar-topbarContent.main-entityHeader-topbarContent`), 
                 (Element: HTMLElement | null) => {
                     if (!Element) return;
 
-                    const topbar = document.querySelector<HTMLElement>(`div.main-topBar-background`)
-                    if (!topbar) return;
+                    const Topbar = document.querySelector<HTMLElement>(`.main-topBar-container .main-topBar-background`)
+                    if (!Topbar) return;
                 
-                    headerInterval = Interval(1000/1000, () => {
+                    headerTextLoop = Interval(0.05, () => {
                         if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
-                            
-                            topbar.classList.add("show-header-opacity");
-                            topbar.classList.remove("hide-header-opacity");
+                            if (!Topbar.classList.contains("ShowHeaderOpacity")) {
+                                Topbar.classList.add("ShowHeaderOpacity");
+                            }
                         } else {
-                            topbar.classList.remove("show-header-opacity");
-                            topbar.classList.add("hide-header-opacity");
+                            if (Topbar.classList.contains("ShowHeaderOpacity")) {
+                                Topbar.classList.remove("ShowHeaderOpacity");
+                            }
                         }
-                    NavigationMaid?.Give(headerInterval);
-                    GlobalMaid.Give(headerInterval);
-                    
+                    });
+
+                    NavigationMaid?.Give(headerTextLoop);
+                    GlobalMaid.Give(headerTextLoop);
                 })
-            })
                 
                 scrollNodeWhentil = Whentil.When(() => isLegacy ? document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node .os-viewport`) : document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node [data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll"]`),
                 (Element: HTMLElement | null) => {
@@ -388,8 +371,6 @@ OnSpotifyReady
                                 (HeaderContent: HTMLElement | null) => {
                                     if (!HeaderContent) return;
                                     if (!BackgroundToggle.Enabled) {
-                                        HeaderContent.classList.remove("ScrolledPast");
-                                        HeaderContent.classList.remove("ProfilePictureApplied");
                                         BGImage.style.opacity = "1";
                                         BGImage.style.scale = "1";
                                         BGImage.style.removeProperty("--blur-strength");
@@ -411,7 +392,8 @@ OnSpotifyReady
                                     }
 
                                     const AddPfp = () => {
-                                        if (HeaderContent.classList.contains("ProfilePictureApplied") || HeaderContent.classList.contains("ProfilePictureLoading")) return;
+                                        return;
+                                        /* if (HeaderContent.classList.contains("ProfilePictureApplied") || HeaderContent.classList.contains("ProfilePictureLoading")) return;
                                         const ContentSpacing = HeaderContent.querySelector<HTMLElement>(".iWTIFTzhRZT0rCD0_gOK");
                                         const ArtistId = (event.pathname.includes("/artist/") ? event.pathname.replace("/artist/", "") : undefined);
                                         if (ArtistId) {
@@ -451,177 +433,61 @@ OnSpotifyReady
                                                 })
                                             } else {
                                                 HeaderContent.classList.remove("ProfilePictureLoading")
-                                            }
+                                            } */
                                     }
                                     if (BackgroundToggle.Enabled) {
                                         AddPfp();
                                     }
 
-                                    // Set initial opacity based on scroll position
-                                    const scrollTop = Element.scrollTop;
-
-                                    // Calculate the maximum scroll value where the image should be fully transparent
-                                    const maxScrollForFullTransparent = BGImage.offsetHeight * HEADER_IMAGE_EFFECT_CONFIG.SCROLL_INPUT.IMAGE_HEIGHT_MULTIPLIER;
-                                    // Clip multiplier to make the fading more aggressive
-                                    const fadeMultiplier = HEADER_IMAGE_EFFECT_CONFIG.SCROLL_INPUT.FADE_MULTIPLIER;
-
-                                    // Calculate base fade percentage (0-100)
-                                    const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
-
-                                    // Calculate Opacity
-                                    const opacityConfig = HEADER_IMAGE_EFFECT_CONFIG.OPACITY;
-                                    let opacityEffectProgress = 0;
-                                    if (fadePercentage >= opacityConfig.SCROLL_PERCENTAGE_END) {
-                                        opacityEffectProgress = 1;
-                                    } else if (fadePercentage > opacityConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = opacityConfig.SCROLL_PERCENTAGE_END - opacityConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            opacityEffectProgress = (fadePercentage - opacityConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    opacityEffectProgress = Math.max(0, Math.min(1, opacityEffectProgress));
-                                    const opacity = opacityConfig.INITIAL_VALUE + opacityEffectProgress * (opacityConfig.TARGET_VALUE - opacityConfig.INITIAL_VALUE);
-                                    BGImage.style.opacity = opacity.toString();
-
-                                    if (HeaderContent && opacity <= opacityConfig.SCROLLED_PAST_THRESHOLD) {
-                                        if (BackgroundToggle.Enabled) {
-                                            HeaderContent.classList.add("ScrolledPast")
-                                        }
-                                    } else {
-                                        if (BackgroundToggle.Enabled) {
-                                            HeaderContent?.classList.remove("ScrolledPast")
-                                        }
-                                    }
-
-                                    // Calculate Scale
-                                    const scaleConfig = HEADER_IMAGE_EFFECT_CONFIG.SCALE;
-                                    let scaleEffectProgress = 0;
-                                    if (fadePercentage >= scaleConfig.SCROLL_PERCENTAGE_END) {
-                                        scaleEffectProgress = 1;
-                                    } else if (fadePercentage > scaleConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = scaleConfig.SCROLL_PERCENTAGE_END - scaleConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            scaleEffectProgress = (fadePercentage - scaleConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    scaleEffectProgress = Math.max(0, Math.min(1, scaleEffectProgress));
-                                    const scale = scaleConfig.INITIAL_VALUE + scaleEffectProgress * (scaleConfig.TARGET_VALUE - scaleConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    const applyScrollEffects = (currentScrollTop: number) => {
+                                        const maxScroll = BGImage.offsetHeight * HEADER_IMAGE_EFFECT_CONFIG.SCROLL_INPUT.IMAGE_HEIGHT_MULTIPLIER;
+                                        const scrollProgress = Math.max(0, Math.min(1, currentScrollTop / maxScroll));
+                                    
+                                        // Calculate Scale
+                                        const scaleConfig = HEADER_IMAGE_EFFECT_CONFIG.SCALE;
+                                        const scale = scaleConfig.INITIAL_VALUE + scrollProgress * (scaleConfig.TARGET_VALUE - scaleConfig.INITIAL_VALUE);
                                         BGImage.style.scale = scale.toString();
-                                    }
-
-                                    // Calculate Blur
-                                    const blurConfig = HEADER_IMAGE_EFFECT_CONFIG.BLUR;
-                                    let blurEffectProgress = 0;
-                                    if (fadePercentage >= blurConfig.SCROLL_PERCENTAGE_END) {
-                                        blurEffectProgress = 1;
-                                    } else if (fadePercentage > blurConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = blurConfig.SCROLL_PERCENTAGE_END - blurConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            blurEffectProgress = (fadePercentage - blurConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    blurEffectProgress = Math.max(0, Math.min(1, blurEffectProgress));
-                                    const blurValue = blurConfig.INITIAL_VALUE + blurEffectProgress * (blurConfig.TARGET_VALUE - blurConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    
+                                        // Calculate Opacity
+                                        const opacityConfig = HEADER_IMAGE_EFFECT_CONFIG.OPACITY;
+                                        const opacity = opacityConfig.INITIAL_VALUE + scrollProgress * (opacityConfig.TARGET_VALUE - opacityConfig.INITIAL_VALUE);
+                                        BGImage.style.opacity = opacity.toString();
+                                    
+                                        // Calculate Blur
+                                        const blurConfig = HEADER_IMAGE_EFFECT_CONFIG.BLUR;
+                                        const blurValue = blurConfig.INITIAL_VALUE + scrollProgress * (blurConfig.TARGET_VALUE - blurConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--blur-strength", `${blurValue}px`);
-                                    } else {
-                                        BGImage.style.removeProperty("--blur-strength");
-                                    }
-
-                                    // Calculate Saturation
-                                    const saturationConfig = HEADER_IMAGE_EFFECT_CONFIG.SATURATION;
-                                    let saturationEffectProgress = 0;
-                                    if (fadePercentage >= saturationConfig.SCROLL_PERCENTAGE_END) {
-                                        saturationEffectProgress = 1;
-                                    } else if (fadePercentage > saturationConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = saturationConfig.SCROLL_PERCENTAGE_END - saturationConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            saturationEffectProgress = (fadePercentage - saturationConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    saturationEffectProgress = Math.max(0, Math.min(1, saturationEffectProgress));
-                                    const saturationValue = saturationConfig.INITIAL_VALUE + saturationEffectProgress * (saturationConfig.TARGET_VALUE - saturationConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    
+                                        // Calculate Saturation
+                                        const saturationConfig = HEADER_IMAGE_EFFECT_CONFIG.SATURATION;
+                                        const saturationValue = saturationConfig.INITIAL_VALUE + scrollProgress * (saturationConfig.TARGET_VALUE - saturationConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--saturation-strength", saturationValue.toString());
-                                    } else {
-                                        BGImage.style.removeProperty("--saturation-strength");
-                                    }
-
-                                    // Calculate Rotation
-                                    const rotationConfig = HEADER_IMAGE_EFFECT_CONFIG.ROTATION;
-                                    let rotationEffectProgress = 0;
-                                    if (fadePercentage >= rotationConfig.SCROLL_PERCENTAGE_END) {
-                                        rotationEffectProgress = 1;
-                                    } else if (fadePercentage > rotationConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = rotationConfig.SCROLL_PERCENTAGE_END - rotationConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            rotationEffectProgress = (fadePercentage - rotationConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    rotationEffectProgress = Math.max(0, Math.min(1, rotationEffectProgress));
-                                    const rotationValue = rotationConfig.INITIAL_VALUE + rotationEffectProgress * (rotationConfig.TARGET_VALUE - rotationConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    
+                                        // Calculate Rotation
+                                        const rotationConfig = HEADER_IMAGE_EFFECT_CONFIG.ROTATION;
+                                        const rotationValue = rotationConfig.INITIAL_VALUE + scrollProgress * (rotationConfig.TARGET_VALUE - rotationConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--rotation-strength", `${rotationValue}deg`);
-                                    } else {
-                                        BGImage.style.removeProperty("--rotation-strength");
-                                    }
-
-                                    // Calculate Mask Percentage
-                                    const maskConfig = HEADER_IMAGE_EFFECT_CONFIG.MASK_PERCENTAGE;
-                                    let maskEffectProgress = 0;
-                                    if (fadePercentage >= maskConfig.SCROLL_PERCENTAGE_END) {
-                                        maskEffectProgress = 1;
-                                    } else if (fadePercentage > maskConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = maskConfig.SCROLL_PERCENTAGE_END - maskConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            maskEffectProgress = (fadePercentage - maskConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    maskEffectProgress = Math.max(0, Math.min(1, maskEffectProgress));
-                                    const maskValue = maskConfig.INITIAL_VALUE + maskEffectProgress * (maskConfig.TARGET_VALUE - maskConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    
+                                        // Calculate Mask Percentage
+                                        const maskConfig = HEADER_IMAGE_EFFECT_CONFIG.MASK_PERCENTAGE;
+                                        const maskValue = maskConfig.INITIAL_VALUE + scrollProgress * (maskConfig.TARGET_VALUE - maskConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--mask-percentage", `${maskValue}%`);
-                                    } else {
-                                        BGImage.style.removeProperty("--mask-percentage");
-                                    }
-
-                                    // Calculate Brightness
-                                    const brightnessConfig = HEADER_IMAGE_EFFECT_CONFIG.BRIGHTNESS;
-                                    let brightnessEffectProgress = 0;
-                                    if (fadePercentage >= brightnessConfig.SCROLL_PERCENTAGE_END) {
-                                        brightnessEffectProgress = 1;
-                                    } else if (fadePercentage > brightnessConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = brightnessConfig.SCROLL_PERCENTAGE_END - brightnessConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            brightnessEffectProgress = (fadePercentage - brightnessConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    brightnessEffectProgress = Math.max(0, Math.min(1, brightnessEffectProgress));
-                                    const brightnessValue = brightnessConfig.INITIAL_VALUE + brightnessEffectProgress * (brightnessConfig.TARGET_VALUE - brightnessConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    
+                                        // Calculate Brightness
+                                        const brightnessConfig = HEADER_IMAGE_EFFECT_CONFIG.BRIGHTNESS;
+                                        const brightnessValue = brightnessConfig.INITIAL_VALUE + scrollProgress * (brightnessConfig.TARGET_VALUE - brightnessConfig.INITIAL_VALUE);
                                         BGImage.style.setProperty("--brightness-strength", brightnessValue.toString());
-                                    } else {
-                                        BGImage.style.removeProperty("--brightness-strength");
-                                    }
-
-                                    // Calculate Height
-                                    const heightConfig = HEADER_IMAGE_EFFECT_CONFIG.HEIGHT;
-                                    let heightEffectProgress = 0;
-                                    if (fadePercentage >= heightConfig.SCROLL_PERCENTAGE_END) {
-                                        heightEffectProgress = 1;
-                                    } else if (fadePercentage > heightConfig.SCROLL_PERCENTAGE_START) {
-                                        const activeRange = heightConfig.SCROLL_PERCENTAGE_END - heightConfig.SCROLL_PERCENTAGE_START;
-                                        if (activeRange > 0) {
-                                            heightEffectProgress = (fadePercentage - heightConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                        }
-                                    }
-                                    heightEffectProgress = Math.max(0, Math.min(1, heightEffectProgress));
-                                    const heightValue = heightConfig.INITIAL_VALUE + heightEffectProgress * (heightConfig.TARGET_VALUE - heightConfig.INITIAL_VALUE);
-                                    if (BackgroundToggle.Enabled) {
+                                    
+                                        // Calculate Height
+                                        const heightConfig = HEADER_IMAGE_EFFECT_CONFIG.HEIGHT;
+                                        const vhPixels = globalThis.innerHeight / 100;
+                                        const scrolledVh = currentScrollTop / vhPixels;
+                                        const heightValue = Math.max(heightConfig.TARGET_VALUE, heightConfig.INITIAL_VALUE - scrolledVh);
                                         BGImage.style.setProperty("--height", `${heightValue}vh`);
-                                    } else {
-                                        BGImage.style.removeProperty("--height");
+                                    };
+                                    
+                                    if (BackgroundToggle.Enabled) {
+                                        applyScrollEffects(Element.scrollTop);
                                     }
 
                                     Element.addEventListener("scroll", () => {
@@ -629,7 +495,6 @@ OnSpotifyReady
                                         if (!QueryContainer) return;
 
                                         if (!BackgroundToggle.Enabled) {
-                                            QueryContainer.classList.remove("ScrolledPast");
                                             QueryContainer.classList.remove("ProfilePictureApplied");
                                             BGImage.style.opacity = "1";
                                             BGImage.style.scale = "1";
@@ -644,136 +509,7 @@ OnSpotifyReady
 
                                         AddPfp();
                                         
-                                        const scrollTop = Element.scrollTop;
-
-                                        // Calculate base fade percentage (0-100)
-                                        const fadePercentage = Math.min(100, Math.max(0, (scrollTop / maxScrollForFullTransparent) * 100 * fadeMultiplier));
-
-                                        // Calculate Opacity
-                                        const opacityConfig = HEADER_IMAGE_EFFECT_CONFIG.OPACITY;
-                                        let opacityEffectProgress = 0;
-                                        if (fadePercentage >= opacityConfig.SCROLL_PERCENTAGE_END) {
-                                            opacityEffectProgress = 1;
-                                        } else if (fadePercentage > opacityConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = opacityConfig.SCROLL_PERCENTAGE_END - opacityConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                opacityEffectProgress = (fadePercentage - opacityConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        opacityEffectProgress = Math.max(0, Math.min(1, opacityEffectProgress));
-                                        const opacity = opacityConfig.INITIAL_VALUE + opacityEffectProgress * (opacityConfig.TARGET_VALUE - opacityConfig.INITIAL_VALUE);
-                                        BGImage.style.opacity = opacity.toString();
-
-                                        if (QueryContainer && opacity <= opacityConfig.SCROLLED_PAST_THRESHOLD) {
-                                            QueryContainer.classList.add("ScrolledPast")
-                                        } else {
-                                            QueryContainer?.classList.remove("ScrolledPast")
-                                        }
-
-                                        // Calculate Scale
-                                        const scaleConfig = HEADER_IMAGE_EFFECT_CONFIG.SCALE;
-                                        let scaleEffectProgress = 0;
-                                        if (fadePercentage >= scaleConfig.SCROLL_PERCENTAGE_END) {
-                                            scaleEffectProgress = 1;
-                                        } else if (fadePercentage > scaleConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = scaleConfig.SCROLL_PERCENTAGE_END - scaleConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                scaleEffectProgress = (fadePercentage - scaleConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        scaleEffectProgress = Math.max(0, Math.min(1, scaleEffectProgress));
-                                        const scale = scaleConfig.INITIAL_VALUE + scaleEffectProgress * (scaleConfig.TARGET_VALUE - scaleConfig.INITIAL_VALUE);
-                                        BGImage.style.scale = scale.toString();
-
-                                        // Calculate Blur
-                                        const blurConfig = HEADER_IMAGE_EFFECT_CONFIG.BLUR;
-                                        let blurEffectProgress = 0;
-                                        if (fadePercentage >= blurConfig.SCROLL_PERCENTAGE_END) {
-                                            blurEffectProgress = 1;
-                                        } else if (fadePercentage > blurConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = blurConfig.SCROLL_PERCENTAGE_END - blurConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                blurEffectProgress = (fadePercentage - blurConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        blurEffectProgress = Math.max(0, Math.min(1, blurEffectProgress));
-                                        const blurValue = blurConfig.INITIAL_VALUE + blurEffectProgress * (blurConfig.TARGET_VALUE - blurConfig.INITIAL_VALUE);
-                                        BGImage.style.setProperty("--blur-strength", `${blurValue}px`);
-
-                                        // Calculate Saturation
-                                        const saturationConfig = HEADER_IMAGE_EFFECT_CONFIG.SATURATION;
-                                        let saturationEffectProgress = 0;
-                                        if (fadePercentage >= saturationConfig.SCROLL_PERCENTAGE_END) {
-                                            saturationEffectProgress = 1;
-                                        } else if (fadePercentage > saturationConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = saturationConfig.SCROLL_PERCENTAGE_END - saturationConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                saturationEffectProgress = (fadePercentage - saturationConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        saturationEffectProgress = Math.max(0, Math.min(1, saturationEffectProgress));
-                                        const saturationValue = saturationConfig.INITIAL_VALUE + saturationEffectProgress * (saturationConfig.TARGET_VALUE - saturationConfig.INITIAL_VALUE);
-                                        BGImage.style.setProperty("--saturation-strength", saturationValue.toString());
-
-                                        // Calculate Rotation
-                                        const rotationConfig = HEADER_IMAGE_EFFECT_CONFIG.ROTATION;
-                                        let rotationEffectProgress = 0;
-                                        if (fadePercentage >= rotationConfig.SCROLL_PERCENTAGE_END) {
-                                            rotationEffectProgress = 1;
-                                        } else if (fadePercentage > rotationConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = rotationConfig.SCROLL_PERCENTAGE_END - rotationConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                rotationEffectProgress = (fadePercentage - rotationConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        rotationEffectProgress = Math.max(0, Math.min(1, rotationEffectProgress));
-                                        const rotationValue = rotationConfig.INITIAL_VALUE + rotationEffectProgress * (rotationConfig.TARGET_VALUE - rotationConfig.INITIAL_VALUE);
-                                        BGImage.style.setProperty("--rotation-strength", `${rotationValue}deg`);
-
-                                        // Calculate Mask Percentage
-                                        const maskConfig = HEADER_IMAGE_EFFECT_CONFIG.MASK_PERCENTAGE;
-                                        let maskEffectProgress = 0;
-                                        if (fadePercentage >= maskConfig.SCROLL_PERCENTAGE_END) {
-                                            maskEffectProgress = 1;
-                                        } else if (fadePercentage > maskConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = maskConfig.SCROLL_PERCENTAGE_END - maskConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                maskEffectProgress = (fadePercentage - maskConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        maskEffectProgress = Math.max(0, Math.min(1, maskEffectProgress));
-                                        const maskValue = maskConfig.INITIAL_VALUE + maskEffectProgress * (maskConfig.TARGET_VALUE - maskConfig.INITIAL_VALUE);
-                                        BGImage.style.setProperty("--mask-percentage", `${maskValue}%`);
-
-                                        // Calculate Brightness
-                                        const brightnessConfig = HEADER_IMAGE_EFFECT_CONFIG.BRIGHTNESS;
-                                        let brightnessEffectProgress = 0;
-                                        if (fadePercentage >= brightnessConfig.SCROLL_PERCENTAGE_END) {
-                                            brightnessEffectProgress = 1;
-                                        } else if (fadePercentage > brightnessConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = brightnessConfig.SCROLL_PERCENTAGE_END - brightnessConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                brightnessEffectProgress = (fadePercentage - brightnessConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        brightnessEffectProgress = Math.max(0, Math.min(1, brightnessEffectProgress));
-                                        const brightnessValue = brightnessConfig.INITIAL_VALUE + brightnessEffectProgress * (brightnessConfig.TARGET_VALUE - brightnessConfig.INITIAL_VALUE);
-                                        BGImage.style.setProperty("--brightness-strength", brightnessValue.toString());
-
-                                        // Calculate Height
-                                        const heightConfig = HEADER_IMAGE_EFFECT_CONFIG.HEIGHT;
-                                        let heightEffectProgress = 0;
-                                        if (fadePercentage >= heightConfig.SCROLL_PERCENTAGE_END) {
-                                            heightEffectProgress = 1;
-                                        } else if (fadePercentage > heightConfig.SCROLL_PERCENTAGE_START) {
-                                            const activeRange = heightConfig.SCROLL_PERCENTAGE_END - heightConfig.SCROLL_PERCENTAGE_START;
-                                            if (activeRange > 0) {
-                                                heightEffectProgress = (fadePercentage - heightConfig.SCROLL_PERCENTAGE_START) / activeRange;
-                                            }
-                                        }
-                                        heightEffectProgress = Math.max(0, Math.min(1, heightEffectProgress));
-                                        const heightValue = heightConfig.INITIAL_VALUE + heightEffectProgress * (heightConfig.TARGET_VALUE - heightConfig.INITIAL_VALUE);
-                                        BGImage.style.setProperty("--height", `${heightValue}vh`);
+                                        applyScrollEffects(Element.scrollTop);
                                     }, { signal: EventAbortController.signal });
                                 })
                                 NavigationMaid?.Give(() => HeaderContentWhentil?.Cancel());
