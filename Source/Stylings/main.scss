@@ -8,6 +8,7 @@
   --spice-highlight: #a8a8a841;
 }
 
+
 .SkeletonLoading {
   --BorderRadius: 0;
   --ValueStop1: 40%;
@@ -58,6 +59,15 @@
       pointer-events: none;
     }
   }
+  .main-topBar-background {
+    transition: opacity .5s;
+    filter: brightness(1);
+    opacity: 0 !important;
+  }
+
+  .ShowHeaderOpacity {
+    opacity: 1 !important;
+  }
 
   .main-actionBarBackground-background,
   .main-entityHeader-backgroundColor,
@@ -78,7 +88,7 @@
     background-color: unset !important;
   }
 
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage,
+  /* .main-entityHeader-container.main-entityHeader-withBackgroundImage,
   .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage {
     height: 75.5vh !important;
     transition: height .35s ease-out;
@@ -90,7 +100,7 @@
 
   .main-entityHeader-container.main-entityHeader-withBackgroundImage.ScrolledPast {
     height: 500px !important;
-  }
+  } */
 
   .XUwMufC5NCgIyRMyGXLD {
     background-position: 50% 20% !important;
@@ -108,11 +118,11 @@
       .wozXSN04ZBOkhrsuY5i2.XUwMufC5NCgIyRMyGXLD,
       .main-entityHeader-background.main-entityHeader-gradient {
         filter: brightness(var(--brightness-strength, 0.8)) blur(var(--blur-strength, 0px)) saturate(var(--saturation-strength, 1));
-        mask-image: linear-gradient(to top, transparent, black var(--mask-percentage, 55%));
-        scale: 1.025;
-        height: var(--height, 78vh) !important;
+        mask-image: linear-gradient(to top, transparent, black var(--mask-percentage, 75%));
+        scale: 1.085;
+        height: var(--height, 40vh) !important;
         transform: rotate(var(--rotation-strength, 0deg));
-        transition: height .5s !important;
+        /* transition: height .15s !important; */
       }
     }
   }
@@ -144,7 +154,7 @@
     --generic-tooltip-background-color: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(50px) !important;
   }
-
+  .main-topBar-background,
   .NiqTdDnFi5KAXoGukrdo,
   .BoxComponent-group-card-naked-isInteractive-draggable:hover::after,
   .BoxComponent-group-card-naked-isInteractive:hover::after,
@@ -154,7 +164,6 @@
   .b7r2WRiu5f9Q99qmyreh .main-topBar-searchBar:focus,
   .MGZ4oJmGVPrWsx5cT5hN,
   .AIlmv6h8bR5NY5R0VceT:hover,
-  .main-topBar-background,
   .main-contextMenu-menu:has(button[role="menuitemradio"]),
   .tLjX9htIKD_OCmEX01UN,
   .main-userWidget-box,
@@ -432,12 +441,12 @@
     transition: left .4s;
   }
 
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .eFZahdafW8vQ7xY1kfBg,
-  .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .main-entityHeader-headerText {
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .eFZahdafW8vQ7xY1kfBg,
+  .os-host .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .main-entityHeader-headerText {
     left: 0;
   }
 
-  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied.ScrolledPast .main-entityHeader-imageContainer {
+  .main-entityHeader-container.main-entityHeader-withBackgroundImage.ProfilePictureApplied .main-entityHeader-imageContainer {
     left: 0;
   }
 
@@ -465,6 +474,16 @@
 
   .main-tag-container {
     color: #000000;
+  }
+
+  .kwzBRpFigKr1EP2d5qle {
+    color: #000000 !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(3.5px) !important;
+  }
+
+  .guUl5dHbF5HJRvwjBxzR .jyNYgeneJ5inaKhciDjS {
+    mask-image: linear-gradient(0deg, transparent, black 80%);
   }
 }
 
