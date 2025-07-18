@@ -1,29 +1,54 @@
+import { ApplyKeyframes } from "./Tools/KeyframeProcessor.ts";
 import { GetCoverArtForSong } from "./Tools/GetSongCoverArt.ts";
 import { DynamicBackground } from "@spikerko/tools/DynamicBackground";
+import TempoPlugin from "@spikerko/tools/TempoPlugin";
 import './Stylings/main.scss'
 import {
+    GetSpotifyAccessToken,
 	GlobalMaid,
 	HistoryLocation,
 	OnSpotifyReady,
-    // ShowNotification,
-    SpotifyHistory
+    SpotifyHistory,
+    SpotifyPlayer
 } from "@spikerko/spices/Spicetify/Services/Session"
 import {
     Song,
 	SongChanged,
+    Timestamp,
 } from "@spikerko/spices/Spicetify/Services/Player"
 import type { UpdateNoticeConfiguration } from "@spikerko/spices/AutoUpdate/UpdateNotice"
 import Whentil, { type CancelableTask } from "@spikerko/tools/Whentil";
 import { Maid } from "@socali/modules/Maid";
-import { Timeout, Interval, Scheduled } from "@socali/modules/Scheduler";
+import { Timeout } from "@socali/modules/Scheduler";
 import { BackgroundToggle, DeregisterBackgroundToggle, RegisterBackgroundToggle, GetToggleSignal } from "./Tools/BackgroundToggle.ts";
+import { ApplyFluidGlassEffectToDOM } from "./Tools/FluidGlassEffect.ts";
+import { GetMainViewContainer, SetupObservers } from "./Tools/MainView.ts";
 // import GetArtistsProfilePicture from "./Tools/GetArtistsProfilePicture.ts";
 
 // Constants for DynamicBackground configuration
 const BG_CONFIG = {
-    TRANSITION_DURATION: 0.15,  // Transition duration in seconds
-    BLUR_AMOUNT: 45,            // Blur amount in pixels
-    ROTATION_SPEED: 0.3         // Rotation speed
+    TRANSITION_DURATION: 0.5,  // Transition duration in seconds
+    BLUR_AMOUNT: 75,            // Blur amount in pixels
+    ROTATION_SPEED: 0.3,        // Rotation speed
+    PLUGINS: [
+        TempoPlugin({
+            getAccessToken: async () => {
+                const token = await GetSpotifyAccessToken();
+                return `Bearer ${token}`
+            },
+            getPaused: () => {
+                return !SpotifyPlayer.isPlaying();
+            },
+            getSongId: () => {
+                return Song?.Uri.replace("spotify:track:", "") ?? "";
+            },
+            getSongPosition: () => {
+                return Timestamp;
+            },
+            // deno-lint-ignore no-explicit-any
+            SongChangeSignal: SongChanged as any
+        })
+    ]
 };
 
 // Configuration for Header Image scroll effects
@@ -71,6 +96,7 @@ let currentDBGMaid: Maid | undefined;
 let currentBgElement: DynamicBackground | undefined = undefined;
 let backgroundContainer: HTMLElement | undefined;
 
+let ranBGPrefetch = false;
 
 const ResetSpicyBGGlobalObject = () => {
     // deno-lint-ignore no-explicit-any
@@ -81,10 +107,27 @@ const ResetSpicyBGGlobalObject = () => {
     };
 }
 
+const AMOUNT_OF_PREFETCHES = 2;
+
+const prefetchCovers = async () => {
+    if (currentBgElement) {
+        for (let i = 0; i <= (AMOUNT_OF_PREFETCHES - 1); i++) {
+            const cover = SpotifyPlayer.data.nextItems?.[i]?.metadata?.image_large_url;
+            if (!cover) return;
+            await currentBgElement.PrefetchImage(cover);
+        }
+    }
+}
+
 OnSpotifyReady
 .then(
     () => {
+        ApplyKeyframes()
+        ApplyFluidGlassEffectToDOM();
         ResetSpicyBGGlobalObject();
+        const mainViewWhentil = Whentil.When(GetMainViewContainer, SetupObservers)
+        GlobalMaid.Give(() => mainViewWhentil.Cancel());
+
         // Initialize the maid
         currentDBGMaid = GlobalMaid.Give(new Maid());
 
@@ -156,7 +199,8 @@ OnSpotifyReady
                                     transition: BG_CONFIG.TRANSITION_DURATION,
                                     blur: BG_CONFIG.BLUR_AMOUNT,
                                     maid: currentDBGMaid,
-                                    speed: BG_CONFIG.ROTATION_SPEED
+                                    speed: BG_CONFIG.ROTATION_SPEED,
+                                    plugins: BG_CONFIG.PLUGINS
                                 });
 
                                 // Add the "BackgroundLayer" class
@@ -232,7 +276,8 @@ OnSpotifyReady
                                 transition: BG_CONFIG.TRANSITION_DURATION,
                                 blur: BG_CONFIG.BLUR_AMOUNT,
                                 maid: currentDBGMaid,
-                                speed: BG_CONFIG.ROTATION_SPEED
+                                speed: BG_CONFIG.ROTATION_SPEED,
+                                plugins: BG_CONFIG.PLUGINS
                             });
 
                             // Add the "BackgroundLayer" class
@@ -268,6 +313,11 @@ OnSpotifyReady
                                 }
                             }
                         }
+                        
+                        if (!ranBGPrefetch) {
+                            prefetchCovers();
+                            ranBGPrefetch = true;
+                        }
                     }
                 );
 
@@ -284,6 +334,8 @@ OnSpotifyReady
 
         GlobalMaid.Give(SongChanged.Connect(applyDynamicBg));
 
+        GlobalMaid.Give(SongChanged.Connect(prefetchCovers));
+
         const songWhentil = Whentil.When(() => Song, () => {
             applyDynamicBg();
         })
@@ -299,10 +351,7 @@ OnSpotifyReady
 
         const isLegacy = document.querySelector<HTMLElement>(".Root__main-view .os-host") ? true : false;
         
-        {   
-            let artistHeaderWhentil: CancelableTask | undefined = undefined;
-            let headerTextLoop: Scheduled | undefined = undefined;
-
+        {
             let scrollNodeWhentil: CancelableTask | undefined = undefined;
             let HeaderContentWhentil: CancelableTask | undefined = undefined;
             let UMVWhentil: CancelableTask | undefined = undefined;
@@ -333,29 +382,6 @@ OnSpotifyReady
 
                 const EventAbortController = new AbortController();
                 currentEventAbortController = EventAbortController;
-
-                artistHeaderWhentil = Whentil.When(() => document.querySelector<HTMLElement>(`.main-topBar-container .main-topBar-topbarContent.main-entityHeader-topbarContent`), 
-                (Element: HTMLElement | null) => {
-                    if (!Element) return;
-
-                    const Topbar = document.querySelector<HTMLElement>(`.main-topBar-container .main-topBar-background`)
-                    if (!Topbar) return;
-                
-                    headerTextLoop = Interval(0.05, () => {
-                        if (Element.classList.contains("main-entityHeader-topbarContentFadeIn")) {
-                            if (!Topbar.classList.contains("ShowHeaderOpacity")) {
-                                Topbar.classList.add("ShowHeaderOpacity");
-                            }
-                        } else {
-                            if (Topbar.classList.contains("ShowHeaderOpacity")) {
-                                Topbar.classList.remove("ShowHeaderOpacity");
-                            }
-                        }
-                    });
-
-                    NavigationMaid?.Give(headerTextLoop);
-                    GlobalMaid.Give(headerTextLoop);
-                })
                 
                 scrollNodeWhentil = Whentil.When(() => isLegacy ? document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node .os-viewport`) : document.querySelector<HTMLElement>(`.main-view-container .main-view-container__scroll-node [data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll"]`),
                 (Element: HTMLElement | null) => {
@@ -528,7 +554,6 @@ OnSpotifyReady
             GlobalMaid.Give(SpotifyHistory.listen(historyListenerCallback));
             historyListenerCallback(SpotifyHistory.location);
             GlobalMaid.Give(() => scrollNodeWhentil?.Cancel())
-            GlobalMaid.Give(() => artistHeaderWhentil?.Cancel())
             GlobalMaid.Give(() => UMVWhentil?.Cancel())
             GlobalMaid.Give(() => bgImageWhentil?.Cancel());
             GlobalMaid.Give(() => currentEventAbortController?.abort());
