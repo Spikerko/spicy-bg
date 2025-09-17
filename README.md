@@ -1,11 +1,17 @@
-# THIS EXTENSION IS NOT GOING TO BE UPDATED ANYMORE
-### I personally recommend using [Glassify](https://github.com/sanoojes/spicetify-glassify) as an alternative to this extension
+# ⚠️ This Extension Will No Longer Be Updated
 
-Reasons why I'm stopping the development on this extension
-1. I don't have time
-2. [Spicy Lyrics](https://github.com/Spikerko/spicy-lyrics) is my main focus
+I want to let you know that I will **no longer be maintaining this extension**.  
 
-I hope you understand. Bye 👋
+### Recommended Alternative
+If you’re looking for a great replacement, I personally recommend [Glassify](https://github.com/sanoojes/spicetify-glassify) — it’s an excellent alternative!
+
+### Why I'm Pausing Development
+1. I simply don’t have enough time. ⏳  
+2. My main focus right now is [Spicy Lyrics](https://github.com/Spikerko/spicy-lyrics), which I’m dedicating most of my energy to.
+
+I’m truly sorry if this disappoints you, but I hope you understand that I also have other commitments.  
+
+Thanks for all your support, and I wish you the best! 👋
 
 
 
